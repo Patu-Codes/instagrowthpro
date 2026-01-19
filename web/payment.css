@@ -1,0 +1,535 @@
+/* ==================== PAYMENT PAGE STYLES ==================== */
+.payment-section {
+    min-height: 100vh;
+    padding: 8rem 0 4rem;
+}
+
+/* ==================== PROGRESS STEPS ==================== */
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-2xl);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.step-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    border: 2px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all var(--transition-base);
+}
+
+.step.completed .step-circle {
+    background: var(--gradient-primary);
+    border-color: transparent;
+}
+
+.step.active .step-circle {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+    animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(236, 72, 153, 0.7);
+    }
+}
+
+.step-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.step.active .step-label,
+.step.completed .step-label {
+    color: var(--text-primary);
+}
+
+.step-line {
+    width: 80px;
+    height: 2px;
+    background: var(--glass-border);
+    margin: 0 var(--spacing-sm);
+}
+
+.step-line.completed {
+    background: var(--gradient-primary);
+}
+
+/* ==================== PAYMENT CONTAINER ==================== */
+.payment-container {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: var(--spacing-xl);
+    align-items: start;
+}
+
+.payment-wrapper {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    backdrop-filter: blur(20px);
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: var(--spacing-xs);
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* ==================== ORDER INFO CARD ==================== */
+.order-info-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.order-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.order-info-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.order-id {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8B5CF6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.order-info-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--text-secondary);
+}
+
+.info-label {
+    font-weight: 600;
+    min-width: 100px;
+}
+
+.info-value {
+    color: var(--text-primary);
+}
+
+.info-item.total-amount {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--glass-border);
+    font-size: 1.25rem;
+}
+
+.info-item.total-amount .info-value {
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ==================== PAYMENT METHODS ==================== */
+.payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.payment-method {
+    background: var(--bg-secondary);
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-base);
+}
+
+.payment-method.active {
+    border-color: #8B5CF6;
+}
+
+.payment-method.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.method-header {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    cursor: pointer;
+    position: relative;
+}
+
+.method-header input[type="radio"] {
+    margin-right: var(--spacing-sm);
+}
+
+.method-header label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex: 1;
+    cursor: pointer;
+}
+
+.method-icon {
+    flex-shrink: 0;
+}
+
+.method-info {
+    flex: 1;
+}
+
+.method-name {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+}
+
+.method-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.method-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--gradient-primary);
+}
+
+.method-badge.coming-soon {
+    background: var(--text-tertiary);
+}
+
+.method-content {
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--glass-border);
+    display: none;
+}
+
+.payment-method.active .method-content {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== UPI PAYMENT ==================== */
+.upi-payment {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.qr-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.qr-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.qr-header p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.qr-code {
+    width: 300px;
+    height: 300px;
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.qr-code img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.upi-apps {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.app-icons {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.app-icon {
+    padding: 0.5rem 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.payment-divider {
+    text-align: center;
+    position: relative;
+    margin: var(--spacing-lg) 0;
+}
+
+.payment-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--glass-border);
+}
+
+.payment-divider span {
+    position: relative;
+    background: var(--bg-secondary);
+    padding: 0 var(--spacing-md);
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.manual-upi {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.manual-upi h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+/* ==================== PAYMENT ACTIONS ==================== */
+.payment-actions {
+    text-align: center;
+}
+
+.payment-note {
+    margin-top: var(--spacing-md);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* ==================== PAYMENT SIDEBAR ==================== */
+.payment-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.instruction-card,
+.security-card,
+.help-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    backdrop-filter: blur(20px);
+}
+
+.instruction-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+}
+
+.instruction-list {
+    list-style: none;
+    counter-reset: step-counter;
+    padding: 0;
+}
+
+.instruction-list li {
+    counter-increment: step-counter;
+    position: relative;
+    padding-left: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+}
+
+.instruction-list li::before {
+    content: counter(step-counter);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.security-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.security-header h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.security-features {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.security-features li {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--text-secondary);
+}
+
+.help-card h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.help-card p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+.help-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: #8B5CF6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition-base);
+}
+
+.help-link:hover {
+    gap: var(--spacing-sm);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 968px) {
+    .payment-container {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-steps {
+        scale: 0.8;
+    }
+
+    .qr-code {
+        width: 250px;
+        height: 250px;
+    }
+}
+/* ==================== ENHANCED UPI SECTION ==================== */
+.upi-input-header { text-align: center; margin-bottom: var(--spacing-lg); }
+.upi-input-header h4 { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.upi-input-header p { color: var(--text-secondary); font-size: 0.9375rem; }
+.btn-upi { background: linear-gradient(135deg, #00C853 0%, #00E676 100%); color: white; font-weight: 700; font-size: 1.125rem; padding: 1.25rem var(--spacing-lg); display: flex; align-items: center; justify-content: center; gap: var(--spacing-md); border: none; transition: all var(--transition-base); box-shadow: 0 4px 20px rgba(0, 200, 83, 0.3); }
+.btn-upi:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0, 230, 118, 0.4); }
+.upi-apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-md); margin-top: var(--spacing-lg); }
+.upi-app-item { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-xs); }
+.upi-app-circle { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--glass-border); }
+.upi-app-circle.gpay { background: linear-gradient(135deg, #4285F4 0%, #34A853 100%); }
+.upi-app-circle.phonepe { background: linear-gradient(135deg, #5F259F 0%, #3C1361 100%); }
+.upi-app-circle.paytm { background: linear-gradient(135deg, #00BAF2 0%, #002E6E 100%); }
+.upi-app-circle.bhim { background: linear-gradient(135deg, #EE7022 0%, #D64000 100%); }
+.upi-app-item span { font-size: 0.8125rem; color: var(--text-secondary); font-weight: 600; }
+.upi-note { display: flex; align-items: flex-start; gap: var(--spacing-xs); padding: var(--spacing-md); background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius-lg); margin-top: var(--spacing-lg); }
+.upi-note span { color: var(--text-secondary); font-size: 0.875rem; }
+
+/* UPI Input Group */
+.upi-input-group { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.upi-input { font-size: 1rem; padding: 0.875rem var(--spacing-md); }
+.upi-input:focus { border-color: #00C853; box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.1); }
+
+.upi-note div { flex: 1; }
+.upi-note strong { color: var(--text-primary); font-weight: 700; }

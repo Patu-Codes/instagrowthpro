@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Backup Manager</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        button {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-danger {
+            background: #EF4444;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+            display: block;
+        }
+
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            max-height: 200px;
+        }
+
+        .success {
+            color: #10B981;
+            font-weight: 600;
+        }
+
+        .warning {
+            color: #F59E0B;
+        }
+
+        .info {
+            color: #3B82F6;
+            padding: 15px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>💾 Profile Backup Manager</h1>
+
+    <div class="info">
+        <strong>ℹ️ IMPORTANT:</strong> Since your browser clears data, use this tool to backup and restore your profiles
+        manually.
+    </div>
+
+    <div class="section">
+        <h2>📥 Export Profiles (Backup)</h2>
+        <p>Download your profiles as a JSON file. Save this file somewhere safe!</p>
+        <button onclick="exportProfiles()">📥 Download Backup</button>
+        <pre id="exportOutput">Click button to export...</pre>
+    </div>
+
+    <div class="section">
+        <h2>📤 Import Profiles (Restore)</h2>
+        <p>Upload a previously saved backup file to restore your profiles.</p>
+        <input type="file" id="importFile" accept=".json">
+        <button onclick="importProfiles()">📤 Restore from Backup</button>
+        <pre id="importOutput">Select a file to import...</pre>
+    </div>
+
+    <div class="section">
+        <h2>📊 Current Profiles</h2>
+        <button onclick="viewProfiles()">🔍 View Profiles</button>
+        <pre id="profilesOutput">Click button to view...</pre>
+    </div>
+
+    <div class="section">
+        <h2>⚙️ Auto-Restore</h2>
+        <p>If browser cleared your data, this might restore from session backup:</p>
+        <button onclick="autoRestore()">🔄 Try Auto-Restore</button>
+        <pre id="restoreOutput">Click button to try...</pre>
+    </div>
+
+    <script src="simple-profile-system.js"></script>
+    <script>
+        function exportProfiles() {
+            const output = document.getElementById('exportOutput');
+            try {
+                const count = window.simpleProfileSystem.exportToFile();
+                output.className = 'success';
+                output.textContent = `✅ Exported ${count} profile(s)!\n\nFile saved to your Downloads folder.\n\n⚠️ SAVE THIS FILE!`;
+            } catch (error) {
+                output.className = 'error';
+                output.textContent = '❌ Error: ' + error.message;
+            }
+        }
+
+        function importProfiles() {
+            const output = document.getElementById('importOutput');
+            const fileInput = document.getElementById('importFile');
+
+            if (!fileInput.files.length) {
+                output.textContent = '❌ Please select a file first!';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                try {
+                    const count = window.simpleProfileSystem.importFromFile(e.target.result);
+                    output.className = 'success';
+                    output.textContent = `✅ Imported ${count} profile(s)!\n\nYou can now login with your restored profiles.`;
+                    viewProfiles();
+                } catch (error) {
+                    output.className = 'error';
+                    output.textContent = '❌ Error: ' + error.message;
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        function viewProfiles() {
+            const output = document.getElementById('profilesOutput');
+            const profiles = window.simpleProfileSystem.getProfiles();
+
+            if (profiles.length === 0) {
+                output.className = 'warning';
+                output.textContent = '⚠️ No profiles found!\n\nCreate a profile or import a backup.';
+                return;
+            }
+
+            output.className = 'success';
+            output.textContent = `Found ${profiles.length} profile(s):\n\n`;
+
+            profiles.forEach((p, i) => {
+                output.textContent += `${i + 1}. ${p.username}\n`;
+                output.textContent += `   Orders: ${p.orders ? p.orders.length : 0}\n`;
+                output.textContent += `   Created: ${new Date(p.createdAt).toLocaleString()}\n\n`;
+            });
+        }
+
+        function autoRestore() {
+            const output = document.getElementById('restoreOutput');
+            try {
+                const count = window.simpleProfileSystem.restoreFromSession();
+                if (count > 0) {
+                    output.className = 'success';
+                    output.textContent = `✅ Restored ${count} profile(s) from session backup!`;
+                    viewProfiles();
+                } else {
+                    output.className = 'warning';
+                    output.textContent = '⚠️ No session backup found.\n\nThis only works if you JUST closed the browser.';
+                }
+            } catch (error) {
+                output.className = 'error';
+                output.textContent = '❌ Error: ' + error.message;
+            }
+        }
+
+        // Auto-view on load
+        viewProfiles();
+    </script>
+</body>
+
+</html>

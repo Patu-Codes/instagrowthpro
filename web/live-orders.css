@@ -1,0 +1,315 @@
+/* Live Orders Widget - Professional Design */
+.live-orders-widget {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    width: 320px;
+    max-width: calc(100vw - 2rem);
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.98) 0%, rgba(22, 33, 62, 0.98) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 99999;
+    overflow: hidden;
+    animation: slideInFromLeft 0.8s ease-out;
+}
+
+@keyframes slideInFromBottom {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Header */
+.live-orders-header {
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.live-orders-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.live-indicator {
+    width: 10px;
+    height: 10px;
+    background: #10B981;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #10B981;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
+}
+
+.close-orders-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #EF4444;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    transition: all 0.2s;
+}
+
+.close-orders-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.1);
+}
+
+/* Orders List */
+.live-orders-list {
+    max-height: 350px;
+    overflow-y: auto;
+    padding: 0.75rem;
+}
+
+.live-orders-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.live-orders-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.live-orders-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    border-radius: 10px;
+}
+
+/* Order Item */
+.order-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    animation: slideIn 0.5s ease-out;
+    transition: all 0.3s;
+}
+
+.order-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateX(-4px);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.order-item.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+.order-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.order-id {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #8B5CF6;
+    background: rgba(139, 92, 246, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+}
+
+.order-time {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.order-details {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.order-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.order-info {
+    flex: 1;
+}
+
+.order-username {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.25rem;
+}
+
+.order-package {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.order-package .package-name {
+    color: #10B981;
+    font-weight: 600;
+}
+
+/* Footer Disclaimer */
+.live-orders-footer {
+    padding: 0.875rem 1.5rem;
+    background: rgba(139, 92, 246, 0.05);
+    border-top: 1px solid rgba(139, 92, 246, 0.1);
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .live-orders-widget {
+        bottom: 1rem;
+        left: 1rem;
+        /* Changed from right */
+        right: 1rem;
+        /* Also constrain right side */
+        width: auto;
+        max-width: none;
+    }
+
+    .live-orders-list {
+        max-height: 250px;
+    }
+
+    .order-item {
+        padding: 0.875rem;
+    }
+
+    .order-id {
+        font-size: 0.7rem;
+    }
+}
+
+/* Toggle Button (if widget is closed) */
+.live-orders-toggle {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    /* Changed from right */
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+    z-index: 99998;
+    transition: all 0.3s;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+.live-orders-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 40px rgba(139, 92, 246, 0.6);
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.live-orders-toggle .notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 24px;
+    height: 24px;
+    background: #10B981;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+    .live-orders-toggle {
+        bottom: 1rem;
+        left: 1rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+}

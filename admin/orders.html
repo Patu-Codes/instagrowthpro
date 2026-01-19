@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Orders - InstaGrowth Admin</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+
+<body>
+    <!-- Sidebar (matching dashboard) -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">InstaGrowth Admin</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="orders.html" class="nav-item active">
+                <span class="nav-icon">📦</span>
+                <span>All Orders</span>
+            </a>
+            <a href="users.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>Users</span>
+            </a>
+            <a href="live-chat.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span>Live Chat</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="page-title">
+                <h1>Orders Management</h1>
+                <p>Manage and track all customer orders</p>
+            </div>
+            <div class="admin-info">
+                <div class="admin-avatar">👨‍💼</div>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-section"
+            style="margin: 2rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div class="search-container" style="flex: 1; max-width: 400px;">
+                <input type="text" id="searchInput" placeholder="🔍 Search by username or order ID"
+                    onkeyup="filterOrders()"
+                    style="width: 100%; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 8px; color: white;">
+            </div>
+            <div class="filter-buttons" style="display: flex; gap: 0.5rem;">
+                <button class="filter-btn active" onclick="setFilter('all')">All</button>
+                <button class="filter-btn" onclick="setFilter('pending_verification')">Pending</button>
+                <button class="filter-btn" onclick="setFilter('processing')">Processing</button>
+                <button class="filter-btn" onclick="setFilter('completed')">Completed</button>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h2 class="table-title">All Orders (<span id="orderCount">0</span>)</h2>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Profile User</th>
+                        <th>Profile Link</th>
+                        <th>Instagram ID (Send To)</th>
+                        <th>Package</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 3rem;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📦</div>
+                            <div style="color: var(--text-secondary);">Loading orders...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Inline JavaScript -->
+    <script>
+        console.log('📦 Orders Management Loading...');
+
+        // Check authentication
+        if (!sessionStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+
+        let allOrders = [];
+        let currentFilter = 'all';
+
+        // Load orders from API
+        async function loadOrders() {
+            console.log('📥 Loading orders...');
+            try {
+                const response = await fetch('http://localhost:3000/api/orders');
+                if (!response.ok) throw new Error('Failed to load');
+
+                allOrders = await response.json();
+                console.log(`✅ Loaded ${allOrders.length} orders`);
+                displayOrders(allOrders);
+            } catch (error) {
+                console.error('❌ Error:', error);
+                document.getElementById('ordersTableBody').innerHTML = `
+                    <tr><td colspan="9" style="text-align: center; padding: 3rem; color: #EF4444;">
+                        <div>❌ Failed to load orders</div>
+                        <div style="font-size: 0.875rem; margin-top: 0.5rem;">Make sure backend is running on port 3000</div>
+                    </td></tr>
+                `;
+            }
+        }
+
+        function displayOrders(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            document.getElementById('orderCount').textContent = orders.length;
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 3rem;">📭 No orders found</td></tr>';
+                return;
+            }
+
+            const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            tbody.innerHTML = sortedOrders.map(order => {
+                const date = new Date(order.createdAt).toLocaleString();
+                const statusClass = getStatusClass(order.status);
+                const statusText = getStatusText(order.status);
+                const packageName = order.package || order.packageName || 'N/A';
+
+                return `
+                    <tr>
+                        <td><strong>#${order.orderId || 'N/A'}</strong></td>
+                        <td><strong>@${order.profileUsername || 'Unknown'}</strong></td>
+                        <td>${order.profileLink ? `<a href="${order.profileLink}" target="_blank" style="color: #8B5CF6; text-decoration: none; font-weight: 600;">🔗 Link</a>` : 'N/A'}</td>
+                        <td><strong style="color: #EC4899;">@${order.username || 'N/A'}</strong></td>
+                        <td>${packageName} (${order.followers})</td>
+                        <td><strong>₹${order.amount}</strong></td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="btn-action" onclick='viewOrderDetail(${JSON.stringify(order).replace(/'/g, "&#39;")})'>View</button>
+                            <button class="btn-delete" onclick="deleteOrder('${order.orderId}')" style="background: linear-gradient(135deg, #EF4444, #DC2626); margin-left: 0.5rem;">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function viewOrderDetail(order) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;';
+
+            const statusOptions = `
+                <option value="pending_verification" ${order.status === 'pending_verification' ? 'selected' : ''}>Pending Verification</option>
+                <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
+            `;
+
+            modal.innerHTML = `
+                <div style="background: #1a1a2e; border: 1px solid #8B5CF6; border-radius: 16px; padding: 2rem; max-width: 600px; width: 90%;">
+                    <h2 style="margin-bottom: 1.5rem; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Order Details</h2>
+                    
+                    <div style="display: grid; gap: 1rem; margin-bottom: 2rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+                            <span style="color: rgba(255,255,255,0.6);">Order ID:</span>
+                            <strong>${order.orderId}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+                            <span style="color: rgba(255,255,255,0.6);">Instagram:</span>
+                            <strong style="color: #EC4899;">@${order.username}</strong>
+                        </div>
+                        ${order.profileLink ? `
+                        <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+                            <span style="color: rgba(255,255,255,0.6);">Profile Link:</span>
+                            <a href="${order.profileLink}" target="_blank" style="color: #8B5CF6; text-decoration: none;">🔗 Open Profile</a>
+                        </div>
+                        ` : ''}
+                        <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+                            <span style="color: rgba(255,255,255,0.6);">Package:</span>
+                            <strong>${order.package || order.packageName || 'N/A'} (${order.followers} followers)</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+                            <span style="color: rgba(255,255,255,0.6);">Amount:</span>
+                            <strong style="color: #10B981; font-size: 1.25rem;">₹${order.amount}</strong>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: rgba(255,255,255,0.8);">Update Status:</label>
+                        <select id="statusSelect" style="width: 100%; padding: 0.75rem; background: #2a2a3e; border: 1px solid #8B5CF6; border-radius: 8px; color: white; font-size: 1rem;">
+                            ${statusOptions}
+                        </select>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem;">
+                        <button onclick="updateStatus('${order.orderId}')" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">
+                            Update Status
+                        </button>
+                        <button onclick="this.closest('[style*=fixed]').remove()" style="padding: 0.75rem 1.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; cursor: pointer;">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        }
+
+        async function updateStatus(orderId) {
+            const newStatus = document.getElementById('statusSelect').value;
+
+            try {
+                // Close modal immediately for instant feel
+                document.querySelector('[style*=fixed]').remove();
+
+                // Update status in background
+                const response = await fetch(`http://localhost:3000/api/orders/${orderId}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Failed to update' }));
+                    throw new Error(errorData.error || 'Failed to update');
+                }
+
+                // Instant refresh - no modal
+                await loadOrders();
+
+            } catch (error) {
+                console.error('Error updating status:', error);
+                window.modal.error('Failed to update status: ' + error.message, 'Error');
+            }
+        }
+
+        async function deleteOrder(orderId) {
+            if (!confirm('⚠️ Are you sure you want to delete this order?\n\nOrder ID: ' + orderId + '\n\nThis action cannot be undone!')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/orders/${orderId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Failed to delete');
+
+                window.modal.success('Order deleted successfully', 'Deleted');
+                loadOrders(); // Reload orders list
+
+                // Notify dashboard to refresh stats if it's open
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage({ action: 'refreshStats' }, '*');
+                }
+            } catch (error) {
+                window.modal.error('Failed to delete order: ' + error.message, 'Error');
+            }
+        }
+
+        function getStatusClass(status) {
+            return {
+                'pending_verification': 'status-pending',
+                'processing': 'status-processing',
+                'completed': 'status-completed'
+            }[status] || 'status-pending';
+        }
+
+        function getStatusText(status) {
+            return {
+                'pending_verification': 'Pending',
+                'processing': 'Processing',
+                'completed': 'Completed'
+            }[status] || status;
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            filterOrders();
+        }
+
+        function filterOrders() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = allOrders;
+
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(o => o.status === currentFilter);
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(o =>
+                    (o.orderId && o.orderId.toLowerCase().includes(searchTerm)) ||
+                    (o.profileUsername && o.profileUsername.toLowerCase().includes(searchTerm)) ||
+                    (o.username && o.username.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            displayOrders(filtered);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Initialize
+        loadOrders();
+    </script>
+</body>
+
+</html>

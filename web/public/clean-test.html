@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FINAL FIX - InstaGrowth Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <span class="logo-text">InstaGrowth<span class="pro">Pro</span></span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link active">Home</a>
+                    <a href="#pricing" class="nav-link">Pricing</a>
+                    <a href="order.html" class="nav-link">Order Now</a>
+                </div>
+                <!-- ONLY ONE userNavigation div -->
+                <div id="userNavigation"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div style="padding: 40px; background: white; color: black;">
+        <h1>✅ FIXED VERSION</h1>
+        <p>This is a clean version with NO other scripts that might interfere.</p>
+        <p>If this shows username ONCE, then the issue is in index.html having extra scripts.</p>
+    </div>
+
+    <!-- ONLY user-navigation.js - NO app.js -->
+    <script>
+        localStorage.setItem('currentUser', JSON.stringify({
+            username: 'prathamesh0045k@gmail.com',
+            id: 'test123'
+        }));
+    </script>
+    <script src="user-navigation.js?v=7"></script>
+</body>
+
+</html>

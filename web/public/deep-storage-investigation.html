@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Deep LocalStorage Investigation</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #0a0a0f;
+            color: #0f0;
+        }
+
+        .section {
+            background: #1a1a2e;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .good {
+            color: #10B981;
+        }
+
+        .bad {
+            color: #EF4444;
+        }
+
+        button {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        h3 {
+            margin-top: 0;
+            color: #8B5CF6;
+        }
+
+        .warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid #F59E0B;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Deep LocalStorage Investigation</h1>
+
+    <div class="warning">
+        <h3>⚠️ Instructions:</h3>
+        <ol>
+            <li>Login first (if not logged in)</li>
+            <li>Come back to this page</li>
+            <li>Watch the logs in real-time</li>
+            <li>Try closing and reopening tab</li>
+            <li>Report what you see</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h3>Live LocalStorage Monitor</h3>
+        <p>Checking every 2 seconds for changes...</p>
+        <pre id="liveMonitor">Starting monitor...</pre>
+    </div>
+
+    <div class="section">
+        <h3>Browser Info</h3>
+        <pre id="browserInfo">Loading...</pre>
+    </div>
+
+    <div class="section">
+        <h3>Test localStorage Persistence</h3>
+        <button onclick="setTestData()">1. Set Test Data</button>
+        <button onclick="checkTestData()">2. Check Test Data</button>
+        <button onclick="checkCookies()">3. Check Cookies</button>
+        <pre id="testResult">Click buttons to test...</pre>
+    </div>
+
+    <div class="section">
+        <h3>Detailed Event Logs</h3>
+        <pre id="eventLogs">Monitoring all storage events...</pre>
+    </div>
+
+    <script src="api-client.js"></script>
+
+    <script>
+        const eventLogs = document.getElementById('eventLogs');
+        const liveMonitor = document.getElementById('liveMonitor');
+
+        let lastSnapshot = {};
+        let logCount = 0;
+
+        function log(msg, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : '#10B981';
+            eventLogs.innerHTML += `<span style="color: ${color}">[${timestamp}] ${msg}</span>\n`;
+            eventLogs.scrollTop = eventLogs.scrollHeight;
+            console.log(msg);
+            logCount++;
+        }
+
+        function getBrowserInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                browser: getBrowserName(),
+                cookiesEnabled: navigator.cookieEnabled,
+                localStorage: typeof (Storage) !== "undefined",
+                sessionStorage: typeof (sessionStorage) !== "undefined",
+                isPrivate: 'unknown',
+                storageQuota: 'unknown'
+            };
+
+            // Check if private mode
+            try {
+                if (window.indexedDB) {
+                    info.isPrivate = false;
+                }
+            } catch (e) {
+                info.isPrivate = true;
+            }
+
+            // Check storage quota
+            if (navigator.storage && navigator.storage.estimate) {
+                navigator.storage.estimate().then(estimate => {
+                    info.storageQuota = `${(estimate.usage / 1024 / 1024).toFixed(2)} MB / ${(estimate.quota / 1024 / 1024).toFixed(2)} MB`;
+                    document.getElementById('browserInfo').textContent = JSON.stringify(info, null, 2);
+                });
+            }
+
+            return info;
+        }
+
+        function getBrowserName() {
+            const agent = navigator.userAgent.toLowerCase();
+            if (agent.indexOf('edg') > -1) return 'Edge';
+            if (agent.indexOf('chrome') > -1) return 'Chrome';
+            if (agent.indexOf('firefox') > -1) return 'Firefox';
+            if (agent.indexOf('safari') > -1) return 'Safari';
+            return 'Unknown';
+        }
+
+        function monitorLocalStorage() {
+            const current = {
+                authToken: localStorage.getItem('authToken'),
+                currentUser: localStorage.getItem('currentUser'),
+                allKeys: Object.keys(localStorage),
+                totalItems: localStorage.length
+            };
+
+            let changes = [];
+
+            // Check for changes
+            if (JSON.stringify(lastSnapshot) !== JSON.stringify(current)) {
+                if (lastSnapshot.authToken !== current.authToken) {
+                    if (current.authToken === null && lastSnapshot.authToken !== undefined) {
+                        changes.push('⚠️ authToken DELETED');
+                        log('⚠️ authToken was DELETED!', 'error');
+                    } else if (current.authToken && !lastSnapshot.authToken) {
+                        changes.push('✅ authToken ADDED');
+                        log('✅ authToken was added', 'info');
+                    }
+                }
+
+                if (lastSnapshot.currentUser !== current.currentUser) {
+                    if (current.currentUser === null && lastSnapshot.currentUser !== undefined) {
+                        changes.push('⚠️ currentUser DELETED');
+                        log('⚠️ currentUser was DELETED!', 'error');
+                    } else if (current.currentUser && !lastSnapshot.currentUser) {
+                        changes.push('✅ currentUser ADDED');
+                        log('✅ currentUser was added', 'info');
+                    }
+                }
+
+                lastSnapshot = { ...current };
+            }
+
+            // Display current state
+            let display = `[${new Date().toLocaleTimeString()}] Current State:\n`;
+            display += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            display += `authToken: ${current.authToken ? '✅ EXISTS (' + current.authToken.substring(0, 20) + '...)' : '❌ MISSING'}\n`;
+            display += `currentUser: ${current.currentUser ? '✅ EXISTS' : '❌ MISSING'}\n`;
+
+            if (current.currentUser) {
+                try {
+                    const user = JSON.parse(current.currentUser);
+                    display += `  - Username: ${user.username}\n`;
+                    display += `  - ID: ${user.id}\n`;
+                } catch (e) {
+                    display += `  - ERROR: Can't parse user data\n`;
+                }
+            }
+
+            display += `Total items: ${current.totalItems}\n`;
+            display += `Keys: ${current.allKeys.join(', ')}\n`;
+
+            if (changes.length > 0) {
+                display += `\n⚠️ CHANGES DETECTED:\n${changes.join('\n')}\n`;
+            }
+
+            liveMonitor.textContent = display;
+        }
+
+        function setTestData() {
+            const testData = {
+                testKey: 'TEST_' + Date.now(),
+                testUser: JSON.stringify({ username: 'testuser', id: 'test123' }),
+                testToken: 'TOKEN_' + Date.now()
+            };
+
+            localStorage.setItem('testKey', testData.testKey);
+            localStorage.setItem('testUser', testData.testUser);
+            localStorage.setItem('testToken', testData.testToken);
+
+            document.getElementById('testResult').textContent = `✅ Test data set:\n${JSON.stringify(testData, null, 2)}\n\nNow close this tab and reopen to see if it persists!`;
+
+            log('Test data set', 'info');
+            monitorLocalStorage();
+        }
+
+        function checkTestData() {
+            const testData = {
+                testKey: localStorage.getItem('testKey'),
+                testUser: localStorage.getItem('testUser'),
+                testToken: localStorage.getItem('testToken')
+            };
+
+            const result = document.getElementById('testResult');
+
+            if (testData.testKey || testData.testUser || testData.testToken) {
+                result.className = 'good';
+                result.textContent = `✅ TEST DATA FOUND!\n\n${JSON.stringify(testData, null, 2)}\n\n✅ LocalStorage IS persisting!`;
+                log('Test data found - persistence working', 'info');
+            } else {
+                result.className = 'bad';
+                result.textContent = `❌ NO TEST DATA FOUND\n\nThis means localStorage is being cleared.\n\nPossible causes:\n1. Private/Incognito mode\n2. Browser settings\n3. Browser extension\n4. Browser clearing on exit`;
+                log('Test data NOT found - persistence failing', 'error');
+            }
+
+            monitorLocalStorage();
+        }
+
+        function checkCookies() {
+            const result = document.getElementById('testResult');
+            result.textContent = `Cookies enabled: ${navigator.cookieEnabled}\nCurrent cookies: ${document.cookie || 'None'}`;
+        }
+
+        // Monitor storage events
+        window.addEventListener('storage', (e) => {
+            log(`📡 Storage event: ${e.key} changed from "${e.oldValue}" to "${e.newValue}"`, 'warning');
+            monitorLocalStorage();
+        });
+
+        // Monitor page visibility
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                log('👁️ Page hidden', 'warning');
+            } else {
+                log('👁️ Page visible', 'info');
+                monitorLocalStorage();
+            }
+        });
+
+        // Monitor page unload
+        window.addEventListener('beforeunload', () => {
+            log('🚪 Page about to unload', 'warning');
+        });
+
+        // Initialize
+        document.getElementById('browserInfo').textContent = JSON.stringify(getBrowserInfo(), null, 2);
+        log('🔍 Deep investigation started', 'info');
+        log(`Browser: ${getBrowserName()}`, 'info');
+        log(`Cookies enabled: ${navigator.cookieEnabled}`, 'info');
+
+        // Start monitoring
+        monitorLocalStorage();
+        setInterval(monitorLocalStorage, 2000); // Check every 2 seconds
+
+        log('✅ Monitor running - checking every 2 seconds', 'info');
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Test</title>
+</head>
+
+<body>
+    <h1>SIMPLE TEST</h1>
+    <form id="testForm" onsubmit="testSubmit(event)">
+        <input type="text" id="testInput" placeholder="Enter anything" required>
+        <button type="submit">TEST SUBMIT</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        console.log('✅ Script loaded!');
+
+        function testSubmit(e) {
+            console.log('✅ testSubmit called!');
+            e.preventDefault();
+
+            const value = document.getElementById('testInput').value;
+            console.log('Value:', value);
+
+            sessionStorage.setItem('testData', value);
+            console.log('Saved to sessionStorage');
+
+            document.getElementById('result').innerHTML = '<h2>SUCCESS! Redirecting...</h2>';
+
+            setTimeout(() => {
+                window.location.href = 'payment.html';
+            }, 1000);
+
+            return false;
+        }
+
+        window.testSubmit = testSubmit;
+        console.log('✅ testSubmit is ready');
+    </script>
+</body>
+
+</html>

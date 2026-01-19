@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Order Save Test</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .test {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #8B5CF6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .success {
+            color: #10B981;
+        }
+
+        .error {
+            color: #EF4444;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔧 Order Save Debug Test</h1>
+
+    <div class="test">
+        <h2>1. Check Current User</h2>
+        <button onclick="checkUser()">Check User</button>
+        <pre id="userResult"></pre>
+    </div>
+
+    <div class="test">
+        <h2>2. Check Profiles</h2>
+        <button onclick="checkProfiles()">Check Profiles</button>
+        <pre id="profilesResult"></pre>
+    </div>
+
+    <div class="test">
+        <h2>3. Test Save Order</h2>
+        <button onclick="testSaveOrder()">Test Save Order</button>
+        <pre id="saveResult"></pre>
+    </div>
+
+    <div class="test">
+        <h2>4. View All Orders</h2>
+        <button onclick="viewAllOrders()">View Orders</button>
+        <pre id="ordersResult"></pre>
+    </div>
+
+    <div class="test">
+        <h2>5. Clear All Orders</h2>
+        <button onclick="clearOrders()">Clear Orders (RESET)</button>
+    </div>
+
+    <script>
+        function checkUser() {
+            const user = localStorage.getItem('currentUser');
+            const result = document.getElementById('userResult');
+
+            if (user) {
+                const parsed = JSON.parse(user);
+                result.className = 'success';
+                result.textContent = '✅ User Found:\n' + JSON.stringify(parsed, null, 2);
+            } else {
+                result.className = 'error';
+                result.textContent = '❌ No user logged in!\nPlease login first at: /login.html';
+            }
+        }
+
+        function checkProfiles() {
+            const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+            const result = document.getElementById('profilesResult');
+
+            result.textContent = `Found ${profiles.length} profile(s):\n\n` + JSON.stringify(profiles, null, 2);
+        }
+
+        function testSaveOrder() {
+            const result = document.getElementById('saveResult');
+
+            try {
+                // Check user
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (!currentUser) {
+                    result.className = 'error';
+                    result.textContent = '❌ No user logged in!';
+                    return;
+                }
+
+                // Get profiles
+                const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                const profileIndex = profiles.findIndex(p => p.id === currentUser.id);
+
+                if (profileIndex === -1) {
+                    result.className = 'error';
+                    result.textContent = '❌ Profile not found!';
+                    return;
+                }
+
+                // Initialize orders
+                if (!profiles[profileIndex].orders) {
+                    profiles[profileIndex].orders = [];
+                }
+
+                // Create test order
+                const testOrder = {
+                    orderId: 'TEST_' + Date.now(),
+                    username: 'test_instagram',
+                    email: 'test@example.com',
+                    packageName: 'Test Package',
+                    followers: 100,
+                    amount: 349,
+                    status: 'pending_verification',
+                    createdAt: new Date().toISOString()
+                };
+
+                // Add order
+                profiles[profileIndex].orders.push(testOrder);
+
+                // Save
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+
+                // Verify
+                const verify = JSON.parse(localStorage.getItem('profiles'));
+                const verifyProfile = verify.find(p => p.id === currentUser.id);
+
+                result.className = 'success';
+                result.textContent = `✅ TEST ORDER SAVED!\n\nOrder ID: ${testOrder.orderId}\nTotal orders in profile: ${verifyProfile.orders.length}\n\nOrder:\n` + JSON.stringify(testOrder, null, 2);
+
+            } catch (error) {
+                result.className = 'error';
+                result.textContent = '❌ Error: ' + error.message;
+            }
+        }
+
+        function viewAllOrders() {
+            const result = document.getElementById('ordersResult');
+
+            try {
+                const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                let allOrders = [];
+
+                profiles.forEach(profile => {
+                    if (profile.orders && profile.orders.length > 0) {
+                        profile.orders.forEach(order => {
+                            allOrders.push({
+                                profile: profile.username,
+                                ...order
+                            });
+                        });
+                    }
+                });
+
+                if (allOrders.length === 0) {
+                    result.className = 'error';
+                    result.textContent = '❌ No orders found in any profile';
+                } else {
+                    result.className = 'success';
+                    result.textContent = `✅ Found ${allOrders.length} order(s):\n\n` + JSON.stringify(allOrders, null, 2);
+                }
+
+            } catch (error) {
+                result.className = 'error';
+                result.textContent = '❌ Error: ' + error.message;
+            }
+        }
+
+        function clearOrders() {
+            if (confirm('Clear all orders from all profiles?')) {
+                const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                profiles.forEach(profile => {
+                    profile.orders = [];
+                });
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+                alert('✅ All orders cleared!');
+                location.reload();
+            }
+        }
+
+        // Auto-run on load
+        checkUser();
+        checkProfiles();
+    </script>
+</body>
+
+</html>

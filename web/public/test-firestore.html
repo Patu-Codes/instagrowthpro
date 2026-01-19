@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Firestore Write</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .section {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #8B5CF6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        input {
+            padding: 10px;
+            width: 250px;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background: #222;
+            color: white;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+
+        .success {
+            color: #10B981;
+        }
+
+        .error {
+            color: #EF4444;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔥 Firebase Firestore Write Test</h1>
+
+    <div class="section">
+        <h2>1. Create Test Profile & Sync to Cloud</h2>
+        <input type="text" id="testUsername" placeholder="Username" value="testuser123">
+        <input type="password" id="testPassword" placeholder="Password" value="pass123">
+        <button onclick="testCreateProfile()">Create & Sync Profile</button>
+        <pre id="createOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>2. Read from Firestore Cloud</h2>
+        <button onclick="readFromFirestore()">Read All Profiles from Cloud</button>
+        <pre id="readOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>3. Force Load from Cloud</h2>
+        <button onclick="forceLoadFromCloud()">Force Load (simulates browser restart)</button>
+        <pre id="loadOutput"></pre>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Hybrid System -->
+    <script src="firebase-config.js"></script>
+    <script src="hybrid-sync.js"></script>
+
+    <script>
+        async function testCreateProfile() {
+            const output = document.getElementById('createOutput');
+            const username = document.getElementById('testUsername').value;
+            const password = document.getElementById('testPassword').value;
+
+            try {
+                output.textContent = '🔄 Creating profile...\n\n';
+
+                // Create profile
+                const profile = {
+                    id: 'PROFILE_' + Date.now(),
+                    username: username,
+                    password: password,
+                    deviceId: localStorage.getItem('deviceId') || 'DEVICE_' + Date.now(),
+                    createdAt: new Date().toISOString(),
+                    orders: []
+                };
+
+                output.textContent += '✅ Profile object created\n';
+                output.textContent += `   ID: ${profile.id}\n`;
+                output.textContent += `   Username: ${profile.username}\n\n`;
+
+                // Save using hybrid sync
+                if (window.hybridSync) {
+                    window.hybridSync.saveProfile(profile);
+                    output.textContent += '✅ Saved with hybridSync.saveProfile()\n\n';
+                } else {
+                    throw new Error('Hybrid sync not available');
+                }
+
+                // Wait a moment
+                output.textContent += '⏳ Waiting for cloud sync...\n';
+
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Check localStorage
+                const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                output.textContent += `\n📊 localStorage: ${profiles.length} profile(s)\n`;
+
+                // Force sync now
+                output.textContent += '\n🔄 Force syncing to cloud now...\n';
+                await window.hybridSync.syncToCloud();
+
+                output.textContent += '\n✅ DONE! Check Firebase Console or click "Read from Cloud"\n';
+                output.className = 'success';
+
+            } catch (error) {
+                output.textContent += '\n❌ ERROR: ' + error.message;
+                output.className = 'error';
+                console.error(error);
+            }
+        }
+
+        async function readFromFirestore() {
+            const output = document.getElementById('readOutput');
+
+            try {
+                output.textContent = '🔍 Reading from Firestore...\n\n';
+
+                if (!window.firebaseDB) {
+                    throw new Error('Firebase not initialized');
+                }
+
+                const db = window.firebaseDB;
+                const snapshot = await db.collection('profiles').get();
+
+                output.textContent += `Found ${snapshot.size} document(s) in Firestore\n\n`;
+
+                if (snapshot.empty) {
+                    output.textContent += '⚠️ No profiles found in Firestore!\n';
+                    output.textContent += '\nPossible reasons:\n';
+                    output.textContent += '1. Nothing synced yet\n';
+                    output.textContent += '2. Firestore rules blocking writes\n';
+                    output.textContent += '3. Collection name mismatch\n';
+                    output.className = 'error';
+                } else {
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        output.textContent += `📄 Document ID: ${doc.id}\n`;
+                        output.textContent += `   Username: ${data.username}\n`;
+                        output.textContent += `   Created: ${data.createdAt}\n`;
+                        output.textContent += `   Orders: ${data.orders ? data.orders.length : 0}\n\n`;
+                    });
+                    output.className = 'success';
+                }
+
+            } catch (error) {
+                output.textContent += '\n❌ ERROR: ' + error.message;
+                output.className = 'error';
+                console.error(error);
+            }
+        }
+
+        async function forceLoadFromCloud() {
+            const output = document.getElementById('loadOutput');
+
+            try {
+                output.textContent = '📥 Loading from cloud (simulating browser restart)...\n\n';
+
+                // Clear localStorage first
+                output.textContent += '🗑️ Clearing localStorage...\n';
+                localStorage.removeItem('profiles');
+                localStorage.removeItem('currentUser');
+
+                output.textContent += '✅ localStorage cleared\n\n';
+
+                // Load from cloud
+                output.textContent += '📥 Calling hybridSync.loadFromCloud()...\n';
+                await window.hybridSync.loadFromCloud();
+
+                // Check what we got
+                const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+
+                output.textContent += `\n✅ Loaded ${profiles.length} profile(s) from cloud\n\n`;
+
+                if (profiles.length > 0) {
+                    profiles.forEach((p, i) => {
+                        output.textContent += `${i + 1}. ${p.username}\n`;
+                        output.textContent += `   Orders: ${p.orders ? p.orders.length : 0}\n`;
+                    });
+                    output.className = 'success';
+                } else {
+                    output.textContent += '⚠️ No profiles loaded from cloud\n';
+                    output.textContent += 'Try creating a profile first and syncing it.';
+                    output.className = 'error';
+                }
+
+            } catch (error) {
+                output.textContent += '\n❌ ERROR: ' + error.message;
+                output.className = 'error';
+                console.error(error);
+            }
+        }
+
+        // Check Firestore rules
+        async function checkFirestoreAccess() {
+            console.log('🔍 Checking Firestore access...');
+
+            try {
+                const db = window.firebaseDB;
+
+                // Try to write
+                await db.collection('test').doc('test').set({
+                    test: 'Hello',
+                    timestamp: new Date().toISOString()
+                });
+
+                console.log('✅ Firestore write access: OK');
+
+                // Try to read
+                const doc = await db.collection('test').doc('test').get();
+                console.log('✅ Firestore read access: OK');
+
+                // Clean up
+                await db.collection('test').doc('test').delete();
+                console.log('✅ Firestore delete access: OK');
+
+                console.log('🎉 All Firestore permissions working!');
+
+            } catch (error) {
+                console.error('❌ Firestore access error:', error);
+                console.error('Check your Firestore rules in Firebase Console');
+            }
+        }
+
+        // Auto-check on load
+        setTimeout(() => {
+            checkFirestoreAccess();
+        }, 2000);
+    </script>
+</body>
+
+</html>

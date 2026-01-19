@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Persistent Login Debugger</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #0a0a0f;
+            color: #0f0;
+        }
+
+        .section {
+            background: #1a1a2e;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .good {
+            color: #10B981;
+        }
+
+        .bad {
+            color: #EF4444;
+        }
+
+        .warning {
+            color: #F59E0B;
+        }
+
+        button {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        h3 {
+            margin-top: 0;
+            color: #8B5CF6;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Persistent Login Debugger</h1>
+
+    <div class="section">
+        <h3>Step 1: Check LocalStorage</h3>
+        <button onclick="checkLocalStorage()">Check Storage</button>
+        <button onclick="clearStorage()">Clear All Storage</button>
+        <pre id="storageResult">Click button to check...</pre>
+    </div>
+
+    <div class="section">
+        <h3>Step 2: Test Login</h3>
+        <input type="text" id="testUsername" placeholder="Username" style="padding: 8px; margin: 5px;">
+        <input type="password" id="testPassword" placeholder="Password" style="padding: 8px; margin: 5px;">
+        <button onclick="testLogin()">Test Login</button>
+        <pre id="loginResult">Enter credentials and click Test Login...</pre>
+    </div>
+
+    <div class="section">
+        <h3>Step 3: Check If Persistent</h3>
+        <button onclick="checkPersistence()">Check Persistence</button>
+        <pre id="persistenceResult">Click button to check...</pre>
+    </div>
+
+    <div class="section">
+        <h3>Step 4: Manually Set Session</h3>
+        <p>If login doesn't work, manually set a test session:</p>
+        <button onclick="setTestSession()">Set Test Session</button>
+        <pre id="sessionResult">Click button to set test session...</pre>
+    </div>
+
+    <div class="section">
+        <h3>Logs:</h3>
+        <pre id="logs" style="max-height: 300px; overflow-y: auto;">Starting debugger...</pre>
+    </div>
+
+    <script src="api-client.js"></script>
+
+    <script>
+        const logs = document.getElementById('logs');
+
+        function log(msg) {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.textContent += `\n[${timestamp}] ${msg}`;
+            logs.scrollTop = logs.scrollHeight;
+            console.log(msg);
+        }
+
+        function checkLocalStorage() {
+            const result = document.getElementById('storageResult');
+            const authToken = localStorage.getItem('authToken');
+            const currentUser = localStorage.getItem('currentUser');
+            const allKeys = Object.keys(localStorage);
+
+            let output = '';
+
+            if (authToken) {
+                output += `✅ authToken found:\n${authToken}\n\n`;
+                log('✅ Auth token exists');
+            } else {
+                output += `❌ authToken: NOT FOUND\n\n`;
+                log('❌ No auth token');
+            }
+
+            if (currentUser) {
+                output += `✅ currentUser found:\n${currentUser}\n\n`;
+                log('✅ Current user exists');
+            } else {
+                output += `❌ currentUser: NOT FOUND\n\n`;
+                log('❌ No current user');
+            }
+
+            output += `All localStorage keys (${allKeys.length}):\n${allKeys.join(', ') || 'EMPTY'}`;
+
+            result.textContent = output;
+            result.className = (authToken && currentUser) ? 'good' : 'bad';
+        }
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            const username = document.getElementById('testUsername').value;
+            const password = document.getElementById('testPassword').value;
+
+            if (!username || !password) {
+                resultDiv.textContent = '❌ Please enter both username and password';
+                resultDiv.className = 'bad';
+                return;
+            }
+
+            resultDiv.textContent = 'Logging in...';
+            log(`Attempting login: ${username}`);
+
+            try {
+                const result = await window.api.login(username, password);
+
+                resultDiv.className = 'good';
+                resultDiv.textContent = `✅ LOGIN SUCCESSFUL!\n\n${JSON.stringify(result, null, 2)}`;
+
+                log('✅ Login successful');
+                log(`Token: ${result.token}`);
+                log(`User: ${result.profile.username}`);
+
+                // Check if it was saved
+                setTimeout(() => {
+                    checkLocalStorage();
+                    checkPersistence();
+                }, 500);
+
+            } catch (error) {
+                resultDiv.className = 'bad';
+                resultDiv.textContent = `❌ LOGIN FAILED\n\nError: ${error.message}`;
+                log(`❌ Login error: ${error.message}`);
+            }
+        }
+
+        function checkPersistence() {
+            const result = document.getElementById('persistenceResult');
+            const authToken = localStorage.getItem('authToken');
+            const currentUser = localStorage.getItem('currentUser');
+
+            if (!authToken || !currentUser) {
+                result.className = 'bad';
+                result.textContent = '❌ NOT PERSISTENT\n\nNo session data found in localStorage.\nPersistent login will NOT work.';
+                log('❌ Persistence check failed - no data');
+                return;
+            }
+
+            try {
+                const user = JSON.parse(currentUser);
+                result.className = 'good';
+                result.textContent = `✅ PERSISTENT LOGIN WORKING!\n\nStored session:\nUsername: ${user.username}\nToken: ${authToken.substring(0, 30)}...\n\nThis will persist across browser restarts!`;
+                log('✅ Persistence check passed');
+            } catch (error) {
+                result.className = 'bad';
+                result.textContent = `❌ DATA CORRUPTED\n\nCan't parse currentUser data.\nError: ${error.message}`;
+                log(`❌ Data parse error: ${error.message}`);
+            }
+        }
+
+        function setTestSession() {
+            const result = document.getElementById('sessionResult');
+
+            const testUser = {
+                id: 'TEST_USER_' + Date.now(),
+                username: 'testuser',
+                createdAt: new Date().toISOString()
+            };
+
+            const testToken = 'TEST_TOKEN_' + Date.now();
+
+            localStorage.setItem('currentUser', JSON.stringify(testUser));
+            localStorage.setItem('authToken', testToken);
+
+            result.className = 'good';
+            result.textContent = `✅ Test session set!\n\nUsername: ${testUser.username}\nToken: ${testToken}\n\nNow refresh the page to see if it persists.`;
+
+            log('✅ Test session created');
+
+            setTimeout(checkLocalStorage, 500);
+        }
+
+        function clearStorage() {
+            localStorage.clear();
+            log('🗑️ LocalStorage cleared');
+            checkLocalStorage();
+            document.getElementById('storageResult').textContent = '🗑️ All storage cleared!';
+        }
+
+        // Auto-check on load
+        window.onload = () => {
+            log('Page loaded');
+            checkLocalStorage();
+            checkPersistence();
+        };
+    </script>
+</body>
+
+</html>

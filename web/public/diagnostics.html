@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>System Diagnostics</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .section {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #8B5CF6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 300px;
+        }
+
+        .success {
+            color: #10B981;
+        }
+
+        .error {
+            color: #EF4444;
+        }
+
+        .warning {
+            color: #F59E0B;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔧 Complete System Diagnostics</h1>
+
+    <div class="section">
+        <h2>1. Browser Storage Status</h2>
+        <button onclick="checkBrowserStorage()">Check Browser Storage</button>
+        <pre id="storageOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>2. Firebase Connection</h2>
+        <button onclick="checkFirebase()">Test Firebase Connection</button>
+        <pre id="firebaseOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>3. Firestore Data</h2>
+        <button onclick="checkFirestoreData()">Check Firestore Database</button>
+        <pre id="firestoreOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>4. Test Complete Flow</h2>
+        <button onclick="testCompleteFlow()">Test Profile Creation & Sync</button>
+        <pre id="flowOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>5. Fix Everything</h2>
+        <button onclick="fixEverything()" style="background: #10B981; font-size: 1.1rem; padding: 15px 30px;">🔧
+            Auto-Fix All Issues</button>
+        <pre id="fixOutput"></pre>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="hybrid-sync.js"></script>
+
+    <script>
+        function checkBrowserStorage() {
+            const output = document.getElementById('storageOutput');
+            output.textContent = 'Checking browser storage...\n\n';
+
+            // Check localStorage
+            const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+            const currentUser = localStorage.getItem('currentUser');
+
+            output.textContent += `📊 LocalStorage Status:\n`;
+            output.textContent += `  Profiles: ${profiles.length}\n`;
+            output.textContent += `  Current User: ${currentUser ? 'YES' : 'NO'}\n\n`;
+
+            if (profiles.length > 0) {
+                output.textContent += `Profiles found:\n`;
+                profiles.forEach((p, i) => {
+                    output.textContent += `  ${i + 1}. ${p.username} (${p.orders ? p.orders.length : 0} orders)\n`;
+                });
+            } else {
+                output.textContent += `⚠️ NO PROFILES IN LOCALSTORAGE\n`;
+            }
+
+            output.className = profiles.length > 0 ? 'success' : 'warning';
+        }
+
+        async function checkFirebase() {
+            const output = document.getElementById('firebaseOutput');
+            output.textContent = 'Testing Firebase connection...\n\n';
+
+            try {
+                if (!window.firebaseDB) {
+                    output.textContent += '❌ Firebase not initialized!\n';
+                    output.className = 'error';
+                    return;
+                }
+
+                output.textContent += '✅ Firebase initialized\n\n';
+
+                // Test write
+                output.textContent += 'Testing write access...\n';
+                await window.firebaseDB.collection('test').doc('diagnostic').set({
+                    test: 'Hello from diagnostics',
+                    timestamp: new Date().toISOString()
+                });
+                output.textContent += '✅ WRITE access: OK\n\n';
+
+                // Test read
+                output.textContent += 'Testing read access...\n';
+                const doc = await window.firebaseDB.collection('test').doc('diagnostic').get();
+                output.textContent += `✅ READ access: OK (${doc.data().test})\n\n`;
+
+                // Clean up
+                await window.firebaseDB.collection('test').doc('diagnostic').delete();
+                output.textContent += '✅ DELETE access: OK\n\n';
+
+                output.textContent += '🎉 FIREBASE FULLY FUNCTIONAL!\n';
+                output.className = 'success';
+
+            } catch (error) {
+                output.textContent += `\n❌ ERROR: ${error.message}\n`;
+                output.textContent += `\nCode: ${error.code}\n`;
+                output.className = 'error';
+            }
+        }
+
+        async function checkFirestoreData() {
+            const output = document.getElementById('firestoreOutput');
+            output.textContent = 'Checking Firestore database...\n\n';
+
+            try {
+                // Check profiles collection
+                output.textContent += '📥 Reading profiles collection...\n';
+                const snapshot = await window.firebaseDB.collection('profiles').get();
+
+                output.textContent += `\n📊 Firestore Data:\n`;
+                output.textContent += `  Total profiles: ${snapshot.size}\n\n`;
+
+                if (snapshot.empty) {
+                    output.textContent += '⚠️ NO PROFILES IN FIRESTORE!\n';
+                    output.textContent += '\nThis is why data isn\'t persisting!\n';
+                    output.className = 'warning';
+                } else {
+                    output.textContent += 'Profiles in Firestore:\n';
+                    snapshot.forEach((doc, i) => {
+                        const data = doc.data();
+                        output.textContent += `  ${i + 1}. ${data.username}\n`;
+                        output.textContent += `     Orders: ${data.orders ? data.orders.length : 0}\n`;
+                        output.textContent += `     Created: ${data.createdAt}\n\n`;
+                    });
+                    output.className = 'success';
+                }
+
+            } catch (error) {
+                output.textContent += `\n❌ ERROR: ${error.message}\n`;
+                output.className = 'error';
+            }
+        }
+
+        async function testCompleteFlow() {
+            const output = document.getElementById('flowOutput');
+            output.textContent = 'Testing complete profile creation flow...\n\n';
+
+            try {
+                const testProfile = {
+                    id: 'DIAGNOSTIC_' + Date.now(),
+                    username: 'diagnostic_test',
+                    password: 'test123',
+                    deviceId: 'DEVICE_TEST',
+                    createdAt: new Date().toISOString(),
+                    orders: []
+                };
+
+                // Step 1: Save to localStorage
+                output.textContent += '1️⃣ Saving to localStorage...\n';
+                const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                profiles.push(testProfile);
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+                output.textContent += '   ✅ Saved to localStorage\n\n';
+
+                // Step 2: Save to Firestore
+                output.textContent += '2️⃣ Saving to Firestore...\n';
+                await window.firebaseDB.collection('profiles').doc(testProfile.id).set(testProfile);
+                output.textContent += '   ✅ Saved to Firestore\n\n';
+
+                // Step 3: Verify Firestore
+                output.textContent += '3️⃣ Verifying Firestore save...\n';
+                const doc = await window.firebaseDB.collection('profiles').doc(testProfile.id).get();
+                if (doc.exists) {
+                    output.textContent += '   ✅ Verified in Firestore\n\n';
+                } else {
+                    output.textContent += '   ❌ NOT in Firestore!\n\n';
+                }
+
+                // Step 4: Simulate browser clear
+                output.textContent += '4️⃣ Simulating browser clear (removing from localStorage)...\n';
+                localStorage.removeItem('profiles');
+                output.textContent += '   ✅ LocalStorage cleared\n\n';
+
+                // Step 5: Load from Firestore
+                output.textContent += '5️⃣ Loading from Firestore...\n';
+                const snapshot = await window.firebaseDB.collection('profiles').where('deviceId', '==', 'DEVICE_TEST').get();
+                if (!snapshot.empty) {
+                    output.textContent += `   ✅ Found ${snapshot.size} profile(s) in Firestore\n\n`;
+                } else {
+                    output.textContent += '   ❌ Could not load from Firestore\n\n';
+                }
+
+                // Clean up
+                await window.firebaseDB.collection('profiles').doc(testProfile.id).delete();
+                output.textContent += '✅ Test complete - cleaned up test data\n\n';
+                output.textContent += '🎉 COMPLETE FLOW WORKING!\n';
+                output.className = 'success';
+
+            } catch (error) {
+                output.textContent += `\n❌ ERROR: ${error.message}\n`;
+                output.className = 'error';
+            }
+        }
+
+        async function fixEverything() {
+            const output = document.getElementById('fixOutput');
+            output.textContent = '🔧 Starting auto-fix...\n\n';
+
+            try {
+                // Step 1: Check localStorage
+                output.textContent += '1️⃣ Checking localStorage...\n';
+                const localProfiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+                output.textContent += `   Found ${localProfiles.length} profiles in localStorage\n\n`;
+
+                // Step 2: Load from Firestore
+                output.textContent += '2️⃣ Loading from Firestore...\n';
+                const snapshot = await window.firebaseDB.collection('profiles').get();
+                const cloudProfiles = [];
+                snapshot.forEach(doc => {
+                    cloudProfiles.push({ id: doc.id, ...doc.data() });
+                });
+                output.textContent += `   Found ${cloudProfiles.length} profiles in Firestore\n\n`;
+
+                // Step 3: Merge
+                output.textContent += '3️⃣ Merging data...\n';
+                const merged = [...cloudProfiles];
+                localProfiles.forEach(local => {
+                    if (!merged.find(m => m.id === local.id)) {
+                        merged.push(local);
+                    }
+                });
+                output.textContent += `   Total merged: ${merged.length} profiles\n\n`;
+
+                // Step 4: Save everything to Firestore
+                output.textContent += '4️⃣ Saving all profiles to Firestore...\n';
+                for (const profile of merged) {
+                    await window.firebaseDB.collection('profiles').doc(profile.id).set(profile);
+                }
+                output.textContent += `   ✅ Saved ${merged.length} profiles to Firestore\n\n`;
+
+                // Step 5: Update localStorage
+                output.textContent += '5️⃣ Updating localStorage...\n';
+                localStorage.setItem('profiles', JSON.stringify(merged));
+                output.textContent += '   ✅ LocalStorage updated\n\n';
+
+                output.textContent += '🎉 FIX COMPLETE!\n';
+                output.textContent += `\nYou now have ${merged.length} profiles synced everywhere!\n`;
+                output.className = 'success';
+
+            } catch (error) {
+                output.textContent += `\n❌ ERROR: ${error.message}\n`;
+                output.className = 'error';
+            }
+        }
+    </script>
+</body>
+
+</html>

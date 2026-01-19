@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Instagram Verification Test</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: white;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #EC4899;
+        }
+
+        .test-box {
+            background: #1a1a2e;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border: 2px solid #8B5CF6;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid #8B5CF6;
+            background: #0a0a0f;
+            color: white;
+            font-size: 1rem;
+            margin: 1rem 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10B981;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #EF4444;
+        }
+
+        .info {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid #8B5CF6;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Instagram Verification Test</h1>
+
+    <div class="test-box">
+        <h3>Test Username Verification</h3>
+        <input type="text" id="testUsername" placeholder="Enter Instagram username" />
+        <button onclick="testVerification()">Verify Now</button>
+        <div id="testResult"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>📋 Quick Tests:</h3>
+        <button onclick="quickTest('instagram')">Test: instagram (valid)</button>
+        <button onclick="quickTest('thisuserdoesnotexist999999')">Test: fake user (invalid)</button>
+        <button onclick="quickTest('cristiano')">Test: cristiano (valid)</button>
+    </div>
+
+    <div id="allResults" style="margin-top: 2rem;"></div>
+
+    <script>
+        async function testVerification() {
+            const username = document.getElementById('testUsername').value.trim();
+            const resultDiv = document.getElementById('testResult');
+
+            if (!username) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = 'Please enter a username';
+                return;
+            }
+
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Checking...';
+
+            try {
+                const start = Date.now();
+                const response = await fetch('http://localhost:3000/api/verify-instagram', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+
+                const result = await response.json();
+                const duration = Date.now() - start;
+
+                let output = `Username: ${username}\n`;
+                output += `Time: ${duration}ms\n\n`;
+                output += `Response:\n${JSON.stringify(result, null, 2)}`;
+
+                if (result.valid) {
+                    resultDiv.className = 'result success';
+                    output = '✅ VALID PUBLIC ACCOUNT\n\n' + output;
+                } else {
+                    resultDiv.className = 'result error';
+                    output = '❌ INVALID OR PRIVATE\n\n' + output;
+                }
+
+                resultDiv.textContent = output;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '💥 Error: ' + error.message;
+            }
+        }
+
+        async function quickTest(username) {
+            document.getElementById('testUsername').value = username;
+            await testVerification();
+        }
+
+        // Auto-check on Enter key
+        document.getElementById('testUsername').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') testVerification();
+        });
+    </script>
+</body>
+
+</html>

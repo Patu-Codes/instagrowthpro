@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Persistent Login</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .status {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .success {
+            color: #10B981;
+        }
+
+        .error {
+            color: #EF4444;
+        }
+
+        button {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid #8B5CF6;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔐 Persistent Login Test</h1>
+
+    <div class="status">
+        <h3>Current Session Status:</h3>
+        <div id="sessionStatus">Checking...</div>
+    </div>
+
+    <div class="step">
+        <h3>Step 1: Login First</h3>
+        <p>Before testing persistent login, you need to login:</p>
+        <button onclick="goToLogin()">Go to Login Page</button>
+    </div>
+
+    <div class="step">
+        <h3>Step 2: Check What's Saved</h3>
+        <button onclick="checkStorage()">Check LocalStorage</button>
+        <pre id="storageContent">Click button to check...</pre>
+    </div>
+
+    <div class="step">
+        <h3>Step 3: Test Persistent Login</h3>
+        <p>After logging in, come back here and click:</p>
+        <button onclick="testPersistentLogin()">Test Auto-Login</button>
+        <div id="testResult"></div>
+    </div>
+
+    <div class="step">
+        <h3>Step 4: Close & Reopen Browser</h3>
+        <ol>
+            <li>Login on the main site</li>
+            <li>Close ALL browser windows</li>
+            <li>Reopen browser</li>
+            <li>Go to: <a href="http://localhost:8000" style="color: #8B5CF6">http://localhost:8000</a></li>
+            <li>Should be automatically logged in!</li>
+        </ol>
+    </div>
+
+    <script src="api-client.js"></script>
+
+    <script>
+        function checkStatus() {
+            const statusDiv = document.getElementById('sessionStatus');
+            const user = window.api.getCurrentUser();
+            const token = localStorage.getItem('authToken');
+
+            if (user && token) {
+                statusDiv.className = 'success';
+                statusDiv.innerHTML = `
+                    ✅ <strong>LOGGED IN</strong><br><br>
+                    User: ${user.username}<br>
+                    Profile ID: ${user.id}<br>
+                    Token: ${token.substring(0, 20)}...<br>
+                    Created: ${new Date(user.createdAt).toLocaleString()}
+                `;
+            } else {
+                statusDiv.className = 'error';
+                statusDiv.innerHTML = `
+                    ❌ <strong>NOT LOGGED IN</strong><br><br>
+                    No session found in localStorage.<br>
+                    Please login first.
+                `;
+            }
+        }
+
+        function goToLogin() {
+            window.location.href = 'login.html';
+        }
+
+        function checkStorage() {
+            const output = document.getElementById('storageContent');
+            const authToken = localStorage.getItem('authToken');
+            const currentUser = localStorage.getItem('currentUser');
+
+            output.textContent = `
+Auth Token: ${authToken || 'NOT SET'}
+
+Current User: 
+${currentUser || 'NOT SET'}
+
+All LocalStorage Keys:
+${Object.keys(localStorage).join(', ') || 'EMPTY'}
+            `;
+        }
+
+        async function testPersistentLogin() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.innerHTML = '<p>Testing...</p>';
+
+            const user = window.api.getCurrentUser();
+            const token = localStorage.getItem('authToken');
+
+            if (!user || !token) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <p>❌ <strong>TEST FAILED</strong></p>
+                    <p>No session data found. Please login first.</p>
+                `;
+                return;
+            }
+
+            try {
+                // Try to fetch user's profile using the saved token
+                const profile = await window.api.getProfile(user.id);
+
+                resultDiv.className = 'success';
+                resultDiv.innerHTML = `
+                    <p>✅ <strong>TEST PASSED</strong></p>
+                    <p>Session is valid and working!</p>
+                    <p>User: ${profile.username}</p>
+                    <p><strong>Persistent login is working!</strong></p>
+                `;
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <p>❌ <strong>TEST FAILED</strong></p>
+                    <p>Session data exists but API call failed.</p>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        // Auto-check on load
+        checkStatus();
+
+        // Refresh status every 5 seconds
+        setInterval(checkStatus, 5000);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Payment Test</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+
+        pre {
+            background: #1a1a2e;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Payment Function Test</h1>
+
+    <p>This will test if the payment confirmation is actually calling the API.</p>
+
+    <button class="btn" onclick="testPayment()">Simulate Payment Confirmation</button>
+
+    <pre id="log">Logs will appear here...</pre>
+
+    <script src="modal-system.js"></script>
+    <script src="api-client.js"></script>
+
+    <script>
+        const log = document.getElementById('log');
+
+        function addLog(msg) {
+            log.textContent += '\n' + msg;
+            console.log(msg);
+        }
+
+        async function testPayment() {
+            log.textContent = 'Starting payment test...\n';
+
+            try {
+                // Check if user is logged in
+                addLog('1. Checking login status...');
+                const user = window.api.getCurrentUser();
+
+                if (!user) {
+                    addLog('❌ NOT LOGGED IN!');
+                    addLog('Please login first at: http://localhost:8000/login.html');
+                    return;
+                }
+
+                addLog('✅ Logged in as: ' + user.username);
+
+                // Create test order
+                addLog('\n2. Creating test order...');
+                const testOrder = {
+                    orderId: 'TEST_' + Date.now(),
+                    profileId: user.id,
+                    username: 'test_instagram_' + Math.random().toString(36).substr(2, 5),
+                    email: 'test@example.com',
+                    whatsapp: '1234567890',
+                    packageName: '1K Followers - Starter',
+                    followers: 1000,
+                    amount: 699,
+                    status: 'pending_verification'
+                };
+
+                addLog('Order details:');
+                addLog(JSON.stringify(testOrder, null, 2));
+
+                // Call API
+                addLog('\n3. Calling API to save order...');
+                const result = await window.api.createOrder(testOrder);
+
+                addLog('✅ API RESPONSE:');
+                addLog(JSON.stringify(result, null, 2));
+
+                addLog('\n4. Checking if order appears in database...');
+                const allOrders = await fetch('http://localhost:3000/api/orders').then(r => r.json());
+                const savedOrder = allOrders.find(o => o.orderId === testOrder.orderId);
+
+                if (savedOrder) {
+                    addLog('✅ ORDER FOUND IN DATABASE!');
+                    addLog('Details: ' + JSON.stringify(savedOrder, null, 2));
+
+                    await window.modal.success(
+                        `Test order ${testOrder.orderId} saved successfully! Check admin panel now.`,
+                        'Test Passed! ✅'
+                    );
+                } else {
+                    addLog('❌ ORDER NOT IN DATABASE!');
+                    await window.modal.error('Order was not saved to database!', 'Test Failed');
+                }
+
+            } catch (error) {
+                addLog('\n❌ ERROR: ' + error.message);
+                addLog('Stack: ' + error.stack);
+                await window.modal.error(error.message, 'Error');
+            }
+        }
+    </script>
+</body>
+
+</html>

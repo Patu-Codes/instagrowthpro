@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Orders Test</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            background: #2a2a3e;
+        }
+
+        .error {
+            color: #EF4444;
+            padding: 20px;
+        }
+
+        .loading {
+            color: #8B5CF6;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Orders Test Page</h1>
+    <div id="status" class="loading">Loading...</div>
+    <table id="ordersTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Profile User</th>
+                <th>Profile Link</th>
+                <th>Instagram ID</th>
+                <th>Package</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+
+    <script>
+        console.log('🔥 TEST PAGE LOADING...');
+
+        // Test API directly
+        fetch('http://localhost:3000/api/orders')
+            .then(response => {
+                console.log('✅ Response status:', response.status);
+                if (!response.ok) throw new Error('API returned ' + response.status);
+                return response.json();
+            })
+            .then(orders => {
+                console.log('✅ Got orders:', orders);
+                document.getElementById('status').textContent = `Loaded ${orders.length} orders`;
+
+                if (orders.length === 0) {
+                    document.getElementById('status').textContent = 'No orders found';
+                    return;
+                }
+
+                document.getElementById('ordersTable').style.display = 'table';
+
+                const tbody = document.getElementById('tbody');
+                tbody.innerHTML = orders.map(order => `
+                    <tr>
+                        <td>${order.orderId}</td>
+                        <td>${order.profileUsername || 'Unknown'}</td>
+                        <td>${order.profileLink ? `<a href="${order.profileLink}" target="_blank" style="color: #8B5CF6;">🔗 Link</a>` : 'N/A'}</td>
+                        <td>${order.username}</td>
+                        <td>${order.package || order.packageName || 'N/A'} (${order.followers})</td>
+                        <td>₹${order.amount}</td>
+                    </tr>
+                `).join('');
+            })
+            .catch(error => {
+                console.error('❌ ERROR:', error);
+                document.getElementById('status').className = 'error';
+                document.getElementById('status').innerHTML = `
+                    <strong>Error:</strong> ${error.message}<br>
+                    <br>
+                    Make sure:<br>
+                    1. Backend is running on port 3000<br>
+                    2. CORS is enabled<br>
+                    3. No firewall blocking
+                `;
+            });
+    </script>
+</body>
+
+</html>

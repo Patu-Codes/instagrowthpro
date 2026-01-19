@@ -1,0 +1,136 @@
+// Email endpoints code to add before app.listen()
+
+// ==================== CONTACT/EMAIL SUPPORT ====================
+
+// Configure email transporter (Gmail SMTP)
+const transporter = nodemailer.createTransporter({
+    service: 'gmail',
+    auth: {
+        user: 'neomatrix.studio@gmail.com',
+        pass: 'YOUR_APP_PASSWORD_HERE' // User needs to replace this with Gmail App Password
+    }
+});
+
+// Contact form submission endpoint
+app.post('/api/contact/send', async (req, res) => {
+    const { name, email, subject, message } = req.body;
+    const createdAt = new Date().toISOString();
+
+    console.log('📧 Received contact form submission:', { name, email, subject });
+
+    // Validate inputs
+    if (!name || !email || !subject || !message) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    // Save to database
+    db.run(
+        `INSERT INTO contact_messages (name, email, subject, message, createdAt)
+         VALUES (?, ?, ?, ?, ?)`,
+        [name, email, subject, message, createdAt],
+        function(err) {
+            if (err) {
+                console.error('❌ Database error:', err);
+                return res.status(500).json({ error: 'Failed to save message' });
+            }
+
+            console.log(`✅ Message saved to database (ID: ${this.lastID})`);
+
+            // Send email to support
+            const mailOptions = {
+                from: `"InstaGrowth Pro Support" <neomatrix.studio@gmail.com>`,
+                to: 'neomatrix.studio@gmail.com',
+                replyTo: email,
+                subject: `[Contact Form] ${subject}`,
+                html: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5;">
+                        <div style="background: white; border-radius: 10px; padding: 30px; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #8B5CF6; border-bottom: 3px solid #EC4899; padding-bottom: 10px;">
+                                📧 New Contact Form Submission
+                            </h2>
+                            <div style="margin: 20px 0;">
+                                <p style="margin: 10px 0;"><strong>From:</strong> ${name}</p>
+                                <p style="margin: 10px 0;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                                <p style="margin: 10px 0;"><strong>Subject:</strong> ${subject}</p>
+                                <p style="margin: 10px 0;"><strong>Date:</strong> ${new Date(createdAt).toLocaleString()}</p>
+                            </div>
+                            <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                                <h3 style="color: #333; margin-top: 0;">Message:</h3>
+                                <p style="color: #666; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+                            </div>
+                            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                                <p style="color: #999; font-size: 12px;">InstaGrowth Pro - Contact Form System</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            };
+
+            // Send auto-reply to user
+            const autoReplyOptions = {
+                from: `"InstaGrowth Pro Support" <neomatrix.studio@gmail.com>`,
+                to: email,
+                subject: 'We received your message - InstaGrowth Pro',
+                html: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5;">
+                        <div style="background: white; border-radius: 10px; padding: 30px; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #8B5CF6;">Thank you for contacting us! 💜</h2>
+                            <p style="color: #666; line-height: 1.6;">Hi ${name},</p>
+                            <p style="color: #666; line-height: 1.6;">
+                                We've received your message and our support team will get back to you as soon as possible.
+                                We typically respond within 24 hours.
+                            </p>
+                            <div style="background: #f0f0ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                                <p style="margin: 5px 0; color: #555;"><strong>Your Message:</strong></p>
+                                <p style="margin: 5px 0; color: #777;">${subject}</p>
+                            </div>
+                            <p style="color: #666; line-height: 1.6;">
+                                In the meantime, you can reach us on WhatsApp for instant support:
+                                <a href="https://wa.me/919372645587" style="color: #8B5CF6;">+91 93726 45587</a>
+                            </p>
+                            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                                <p style="color: #999; font-size: 12px;">InstaGrowth Pro</p>
+                                <p style="color: #999; font-size: 12px;">Premium Instagram Growth Services</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            };
+
+            // Send both emails
+            Promise.all([
+                transporter.sendMail(mailOptions),
+                transporter.sendMail(autoReplyOptions)
+            ])
+            .then(() => {
+                console.log('✅ Emails sent successfully');
+                res.json({
+                    success: true,
+                    message: 'Your message has been sent successfully. Our support team will contact you shortly.'
+                });
+            })
+            .catch((error) => {
+                console.error('❌ Email send error:', error);
+                // Still return success since message is saved in DB
+                res.json({
+                    success: true,
+                    message: 'Your message has been received. We will contact you soon.'
+                });
+            });
+        }
+    );
+});
+
+// Get all contact messages (for admin)
+app.get('/api/contact/messages', (req, res) => {
+    db.all(
+        'SELECT * FROM contact_messages ORDER BY createdAt DESC',
+        [],
+        (err, rows) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            res.json(rows);
+        }
+    );
+});

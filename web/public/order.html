@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Your Order - InstaGrowth Pro</title>
+    <meta name="description" content="Order authentic Instagram followers with secure payment and instant delivery">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="order.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <img src="logo.png" alt="InstaGrowthPro Logo"
+                        style="height: 50px; width: auto; border-radius: 50%; margin-right: 10px;">
+                    <span class="logo-text">InstaGrowth<span class="pro">Pro</span></span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="index.html#pricing" class="nav-link">Pricing</a>
+                    <a href="order.html" class="nav-link active">Order Now</a>
+                </div>
+                <a href="index.html" class="btn btn-secondary">Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Order Form Section -->
+    <section class="order-section">
+        <div class="container">
+            <div class="order-header">
+                <h1 class="page-title">Complete Your Order</h1>
+                <p class="page-subtitle">Choose your package and get started in minutes</p>
+            </div>
+
+            <div class="order-container">
+                <!-- Order Form -->
+                <div class="order-form-wrapper">
+                    <form id="orderForm" class="order-form" onsubmit="return handleOrderSubmit(event)">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <rect x="2" y="2" width="16" height="16" rx="4" stroke="#8B5CF6" stroke-width="2" />
+                                    <circle cx="10" cy="8" r="2" stroke="#8B5CF6" stroke-width="2" />
+                                    <path d="M6 15c0-2 1.5-3 4-3s4 1 4 3" stroke="#8B5CF6" stroke-width="2" />
+                                </svg>
+                                Instagram Username
+                            </label>
+                            <input type="text" id="username" name="username" class="form-input"
+                                placeholder="@yourusername" required oninput="validateInstagramUsername()" />
+                            <div id="username-feedback" style="margin-top: 0.5rem; font-size: 0.875rem; display: none;">
+                            </div>
+                            <small class="form-hint">Your Instagram username (without @)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16z" stroke="#8B5CF6" stroke-width="2"
+                                        fill="none" />
+                                    <path d="M6 10h8M10 6v8" stroke="#8B5CF6" stroke-width="2" />
+                                </svg>
+                                Instagram Profile Link
+                            </label>
+                            <input type="url" id="profileLink" name="profileLink" class="form-input"
+                                placeholder="https://instagram.com/yourusername" required />
+                            <small class="form-hint">Your complete Instagram profile URL</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <rect x="2" y="5" width="16" height="11" rx="2" stroke="#8B5CF6" stroke-width="2" />
+                                    <path d="M2 7l8 5 8-5" stroke="#8B5CF6" stroke-width="2" stroke-linejoin="round" />
+                                </svg>
+                                Email (Optional)
+                            </label>
+                            <input type="email" id="email" name="email" class="form-input"
+                                placeholder="your.email@example.com" />
+                            <small class="form-hint">For order updates and notifications</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <rect x="3" y="6" width="14" height="10" rx="2" stroke="#8B5CF6" stroke-width="2" />
+                                    <path d="M6 6V5c0-1.5 1-3 4-3s4 1.5 4 3v1" stroke="#8B5CF6" stroke-width="2" />
+                                </svg>
+                                Select Package
+                            </label>
+                            <div class="package-select">
+                                <!-- Demo Plan -->
+                                <label class="package-option">
+                                    <input type="radio" name="package" value="demo" data-price="130"
+                                        data-followers="50" />
+                                    <div class="package-card" style="border-color: #F59E0B;">
+                                        <div class="package-badge"
+                                            style="background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);">⭐
+                                            ONE-TIME ONLY</div>
+                                        <div class="package-info">
+                                            <div class="package-name">Demo</div>
+                                            <div class="package-followers">50 Followers</div>
+                                        </div>
+                                        <div class="package-price">₹130</div>
+                                    </div>
+                                </label>
+
+                                <!-- Starter Plan -->
+                                <label class="package-option">
+                                    <input type="radio" name="package" value="starter" data-price="349"
+                                        data-followers="100" checked />
+                                    <div class="package-card">
+                                        <div class="package-info">
+                                            <div class="package-name">Starter</div>
+                                            <div class="package-followers">100 Followers</div>
+                                        </div>
+                                        <div class="package-price">₹349</div>
+                                    </div>
+                                </label>
+
+                                <label class="package-option">
+                                    <input type="radio" name="package" value="growth" data-price="699"
+                                        data-followers="200" />
+                                    <div class="package-card">
+                                        <div class="package-badge">Popular</div>
+                                        <div class="package-info">
+                                            <div class="package-name">Growth</div>
+                                            <div class="package-followers">200 Followers</div>
+                                        </div>
+                                        <div class="package-price">₹699</div>
+                                    </div>
+                                </label>
+
+                                <label class="package-option">
+                                    <input type="radio" name="package" value="pro" data-price="1699"
+                                        data-followers="500" />
+                                    <div class="package-card">
+                                        <div class="package-info">
+                                            <div class="package-name">Pro</div>
+                                            <div class="package-followers">500 Followers</div>
+                                        </div>
+                                        <div class="package-price">₹1699</div>
+                                    </div>
+                                </label>
+
+                                <label class="package-option">
+                                    <input type="radio" name="package" value="elite" data-price="3099"
+                                        data-followers="1000" />
+                                    <div class="package-card">
+                                        <div class="package-badge">Best Value</div>
+                                        <div class="package-info">
+                                            <div class="package-name">Elite</div>
+                                            <div class="package-followers">1000 Followers</div>
+                                        </div>
+                                        <div class="package-price">₹3099</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large btn-block">
+                            <span>Proceed to Payment</span>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <h3 class="summary-title">Order Summary</h3>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Package</span>
+                        <span class="summary-value" id="summary-package">Starter</span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Followers</span>
+                        <span class="summary-value" id="summary-followers">100</span>
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-item summary-total">
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value" id="summary-price">₹349</span>
+                    </div>
+
+                    <div class="summary-features">
+                        <div class="summary-feature">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" fill="#10B981" fill-opacity="0.2" />
+                                <path d="M6 10L9 13L14 8" stroke="#10B981" stroke-width="2" />
+                            </svg>
+                            <span>Instant delivery</span>
+                        </div>
+                        <div class="summary-feature">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" fill="#10B981" fill-opacity="0.2" />
+                                <path d="M6 10L9 13L14 8" stroke="#10B981" stroke-width="2" />
+                            </svg>
+                            <span>Real followers</span>
+                        </div>
+                        <div class="summary-feature">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" fill="#10B981" fill-opacity="0.2" />
+                                <path d="M6 10L9 13L14 8" stroke="#10B981" stroke-width="2" />
+                            </svg>
+                            <span>100% Secure</span>
+                        </div>
+                        <div class="summary-feature">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" fill="#10B981" fill-opacity="0.2" />
+                                <path d="M6 10L9 13L14 8" stroke="#10B981" stroke-width="2" />
+                            </svg>
+                            <span>24/7 Support</span>
+                        </div>
+                    </div>
+
+                    <div class="trust-badges">
+                        <div class="trust-badge">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2L4 6v6c0 5.5 3.5 10.6 8 12 4.5-1.4 8-6.5 8-12V6l-8-4z" stroke="#10B981"
+                                    stroke-width="2" />
+                                <path d="M9 12l2 2 4-4" stroke="#10B981" stroke-width="2" />
+                            </svg>
+                            <span>Secure Payment</span>
+                        </div>
+                        <div class="trust-badge">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="8" width="18" height="12" rx="2" stroke="#10B981" stroke-width="2" />
+                                <path d="M7 8V6a5 5 0 0 1 10 0v2" stroke="#10B981" stroke-width="2" />
+                            </svg>
+                            <span>Privacy Protected</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Auth Gate - Must come before order.js -->
+    <script src="firebase-config.js"></script>
+    <script src="hybrid-sync.js"></script>
+    <script src="auto-login.js"></script>
+    <script src="auth-gate.js"></script>
+
+    <script src="username-validation.js"></script>
+    <script src="order.js"></script>
+</body>
+
+</html>

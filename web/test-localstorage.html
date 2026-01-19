@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test localStorage Persistence</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .section {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #8B5CF6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 200px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background: #222;
+            color: white;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .success {
+            color: #10B981;
+        }
+
+        .error {
+            color: #EF4444;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔧 localStorage Persistence Test</h1>
+
+    <div class="section">
+        <h2>1. Test localStorage Write</h2>
+        <input type="text" id="testKey" placeholder="Key" value="testData">
+        <input type="text" id="testValue" placeholder="Value" value="Hello World">
+        <button onclick="testWrite()">Write to localStorage</button>
+        <pre id="writeOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>2. Test localStorage Read</h2>
+        <button onclick="testRead()">Read from localStorage</button>
+        <pre id="readOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>3. Create Test Profile</h2>
+        <input type="text" id="profileUsername" placeholder="Username" value="testuser">
+        <input type="password" id="profilePassword" placeholder="Password" value="test123">
+        <button onclick="createTestProfile()">Create Profile</button>
+        <pre id="profileOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>4. Check All localStorage Data</h2>
+        <button onclick="checkAllData()">View All Data</button>
+        <button onclick="clearAllData()" style="background: #EF4444;">Clear All Data</button>
+        <pre id="allDataOutput"></pre>
+    </div>
+
+    <script>
+        function testWrite() {
+            const key = document.getElementById('testKey').value;
+            const value = document.getElementById('testValue').value;
+            const output = document.getElementById('writeOutput');
+
+            try {
+                localStorage.setItem(key, value);
+                output.className = 'success';
+                output.textContent = `✅ Successfully wrote:\nKey: ${key}\nValue: ${value}`;
+            } catch (error) {
+                output.className = 'error';
+                output.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function testRead() {
+            const key = document.getElementById('testKey').value;
+            const output = document.getElementById('readOutput');
+
+            const value = localStorage.getItem(key);
+
+            if (value !== null) {
+                output.className = 'success';
+                output.textContent = `✅ Read successful:\nKey: ${key}\nValue: ${value}`;
+            } else {
+                output.className = 'error';
+                output.textContent = `❌ Key "${key}" not found in localStorage`;
+            }
+        }
+
+        function createTestProfile() {
+            const username = document.getElementById('profileUsername').value;
+            const password = document.getElementById('profilePassword').value;
+            const output = document.getElementById('profileOutput');
+
+            try {
+                // Get existing profiles
+                const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+
+                // Create new profile
+                const newProfile = {
+                    id: 'PROFILE_' + Date.now(),
+                    username: username,
+                    password: password,
+                    deviceId: 'DEVICE_' + Date.now(),
+                    createdAt: new Date().toISOString(),
+                    orders: []
+                };
+
+                // Add to profiles
+                profiles.push(newProfile);
+
+                // Save
+                localStorage.setItem('profiles', JSON.stringify(profiles));
+
+                // Verify
+                const saved = JSON.parse(localStorage.getItem('profiles'));
+
+                output.className = 'success';
+                output.textContent = `✅ Profile created and saved!\n\n`;
+                output.textContent += `Username: ${username}\n`;
+                output.textContent += `Password: ${password}\n`;
+                output.textContent += `Profile ID: ${newProfile.id}\n\n`;
+                output.textContent += `Total profiles now: ${saved.length}\n\n`;
+                output.textContent += `Verification: Profile exists in localStorage: ${saved.some(p => p.username === username) ? 'YES ✅' : 'NO ❌'}`;
+
+            } catch (error) {
+                output.className = 'error';
+                output.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function checkAllData() {
+            const output = document.getElementById('allDataOutput');
+
+            try {
+                let data = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+
+                    // Try to parse JSON
+                    try {
+                        data[key] = JSON.parse(value);
+                    } catch {
+                        data[key] = value;
+                    }
+                }
+
+                output.className = 'success';
+                output.textContent = `Total items in localStorage: ${localStorage.length}\n\n`;
+                output.textContent += JSON.stringify(data, null, 2);
+
+            } catch (error) {
+                output.className = 'error';
+                output.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ This will clear ALL localStorage data. Continue?')) {
+                localStorage.clear();
+                alert('✅ All data cleared!');
+                checkAllData();
+            }
+        }
+
+        // Auto-check on load
+        checkAllData();
+    </script>
+</body>
+
+</html>

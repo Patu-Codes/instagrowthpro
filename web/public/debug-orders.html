@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug Orders</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #000;
+            color: #0f0;
+        }
+
+        button {
+            background: #0f0;
+            color: #000;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #111;
+            padding: 10px;
+            border: 1px solid #0f0;
+            white-space: pre-wrap;
+        }
+
+        .error {
+            color: #f00;
+        }
+
+        .success {
+            color: #0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Order Debugging Tool</h1>
+
+    <button onclick="checkDatabase()">1. Check Database Orders</button>
+    <button onclick="checkSessionStorage()">2. Check Session Storage</button>
+    <button onclick="checkCurrentUser()">3. Check Current User</button>
+    <button onclick="testCreateOrder()">4. Test Create Order</button>
+
+    <pre id="output">Click buttons above to debug...</pre>
+
+    <script src="api-client.js"></script>
+    <script>
+        async function checkDatabase() {
+            const output = document.getElementById('output');
+            output.textContent = 'Checking database...\n\n';
+
+            try {
+                // Check orders in database
+                const response = await fetch('http://localhost:3000/api/orders');
+                const orders = await response.json();
+
+                output.textContent += `✅ Database Connection: OK\n`;
+                output.textContent += `📦 Total Orders in Database: ${orders.length}\n\n`;
+
+                if (orders.length > 0) {
+                    output.textContent += 'Orders:\n';
+                    orders.forEach((o, i) => {
+                        output.textContent += `\n${i + 1}. Order #${o.orderId}\n`;
+                        output.textContent += `   User: ${o.username}\n`;
+                        output.textContent += `   Package: ${o.packageName}\n`;
+                        output.textContent += `   Amount: ₹${o.amount}\n`;
+                        output.textContent += `   Status: ${o.status}\n`;
+                        output.textContent += `   Created: ${o.createdAt}\n`;
+                    });
+                } else {
+                    output.textContent += '⚠️ NO ORDERS IN DATABASE!\n';
+                }
+
+            } catch (error) {
+                output.className = 'error';
+                output.textContent += '\n❌ Error: ' + error.message;
+            }
+        }
+
+        function checkSessionStorage() {
+            const output = document.getElementById('output');
+            output.textContent = 'Checking session storage...\n\n';
+
+            const pendingOrder = sessionStorage.getItem('pendingOrder');
+            const confirmedOrder = sessionStorage.getItem('confirmedOrder');
+
+            output.textContent += 'Pending Order:\n';
+            output.textContent += pendingOrder ? JSON.stringify(JSON.parse(pendingOrder), null, 2) : '❌ None\n';
+
+            output.textContent += '\n\nConfirmed Order:\n';
+            output.textContent += confirmedOrder ? JSON.stringify(JSON.parse(confirmedOrder), null, 2) : '❌ None\n';
+        }
+
+        function checkCurrentUser() {
+            const output = document.getElementById('output');
+            output.textContent = 'Checking current user...\n\n';
+
+            const user = window.api.getCurrentUser();
+
+            if (user) {
+                output.className = 'success';
+                output.textContent += '✅ User logged in:\n';
+                output.textContent += JSON.stringify(user, null, 2);
+            } else {
+                output.className = 'error';
+                output.textContent += '❌ No user logged in!';
+            }
+        }
+
+        async function testCreateOrder() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing order creation...\n\n';
+
+            try {
+                const user = window.api.getCurrentUser();
+                if (!user) {
+                    output.className = 'error';
+                    output.textContent += '❌ Please login first!';
+                    return;
+                }
+
+                const testOrder = {
+                    orderId: 'TEST_' + Date.now(),
+                    profileId: user.id,
+                    username: 'test_instagram',
+                    email: 'test@test.com',
+                    whatsapp: '1234567890',
+                    packageName: 'Test Package',
+                    followers: 1000,
+                    amount: 99
+                };
+
+                output.textContent += 'Creating test order...\n';
+                output.textContent += JSON.stringify(testOrder, null, 2);
+                output.textContent += '\n\nSending to API...\n';
+
+                const result = await window.api.createOrder(testOrder);
+
+                output.className = 'success';
+                output.textContent += '\n✅ SUCCESS!\n';
+                output.textContent += JSON.stringify(result, null, 2);
+                output.textContent += '\n\nNow check admin panel!';
+
+            } catch (error) {
+                output.className = 'error';
+                output.textContent += '\n❌ Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+
+</html>

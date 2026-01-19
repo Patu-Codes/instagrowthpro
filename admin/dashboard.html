@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Admin Panel</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">InstaGrowth Admin</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>All Orders</span>
+                </a>
+                <a href="users.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>Users</span>
+                </a>
+                <a href="live-chat.html" class="nav-item">
+                    <span class="nav-icon">💬</span>
+                    <span>Live Chat</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="topbar">
+                <div class="page-title">
+                    <h1>Dashboard</h1>
+                    <p id="currentDate">Loading...</p>
+                </div>
+                <div class="admin-info">
+                    <div class="admin-avatar">👨‍💼</div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Orders</span>
+                        <span class="stat-icon">📦</span>
+                    </div>
+                    <div class="stat-value" id="totalOrders">0</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>All time</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Today's Orders</span>
+                        <span class="stat-icon">📅</span>
+                    </div>
+                    <div class="stat-value" id="todayOrders">0</div>
+                    <div class="stat-change positive">
+                        <span>+</span>
+                        <span>Today</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Pending Verification</span>
+                        <span class="stat-icon">⏳</span>
+                    </div>
+                    <div class="stat-value" id="pendingOrders">0</div>
+                    <div class="stat-change" style="color: #F59E0B;">
+                        <span>⚠</span>
+                        <span>Need attention</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Revenue</span>
+                        <span class="stat-icon">💰</span>
+                    </div>
+                    <div class="stat-value" id="totalRevenue" style="color: #10B981;">₹0</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>All time</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">Recent Orders</h2>
+                    <div class="table-actions">
+                        <a href="orders.html" class="btn-action">View All →</a>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Profile User</th>
+                            <th>Instagram ID (Send To)</th>
+                            <th>Package</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentOrdersTable">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                                Loading orders...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-grid" style="margin-top: 2rem;">
+                <div class="stat-card">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value" style="font-size: 1.5rem;" id="totalUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completed Orders</div>
+                    <div class="stat-value" style="font-size: 1.5rem; color: #10B981;" id="completedOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Processing</div>
+                    <div class="stat-value" style="font-size: 1.5rem; color: #3B82F6;" id="processingOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg Order Value</div>
+                    <div class="stat-value" style="font-size: 1.5rem;" id="avgOrderValue">₹0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

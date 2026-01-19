@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug Navigation</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            font-family: Arial;
+        }
+
+        .debug {
+            background: #222;
+            padding: 20px;
+            margin: 10px 0;
+            border: 2px solid #8B5CF6;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Navigation Debug Tool</h1>
+
+    <div class="debug">
+        <h2>Step 1: Check userNavigation element</h2>
+        <div id="userNavigation" style="border: 3px solid red; padding: 10px;"></div>
+    </div>
+
+    <div class="debug">
+        <h2>Step 2: Debug Info</h2>
+        <button onclick="runDebug()"
+            style="padding: 10px 20px; background: #8B5CF6; color: white; border: none; cursor: pointer; font-size: 16px;">
+            Click to Run Debug
+        </button>
+        <pre id="debugOutput" style="background: #111; padding: 10px; margin-top: 10px;"></pre>
+    </div>
+
+    <script>
+        // Simulate localStorage
+        localStorage.setItem('currentUser', JSON.stringify({
+            username: 'prathamesh0045k@gmail.com',
+            id: 'test123'
+        }));
+
+        function runDebug() {
+            const output = document.getElementById('debugOutput');
+            const container = document.getElementById('userNavigation');
+
+            let debug = '';
+            debug += '=== NAVIGATION DEBUG ===\n\n';
+            debug += '1. Container exists: ' + (container ? 'YES' : 'NO') + '\n';
+            debug += '2. Container innerHTML length: ' + (container?.innerHTML.length || 0) + '\n';
+            debug += '3. Number of child elements: ' + (container?.children.length || 0) + '\n';
+            debug += '4. Container innerHTML:\n' + (container?.innerHTML || 'EMPTY') + '\n\n';
+
+            // Check for duplicates
+            const links = container?.querySelectorAll('a') || [];
+            const buttons = container?.querySelectorAll('button') || [];
+            debug += '5. Number of <a> tags: ' + links.length + '\n';
+            debug += '6. Number of <button> tags: ' + buttons.length + '\n\n';
+
+            // List all children
+            debug += '7. All child elements:\n';
+            if (container) {
+                Array.from(container.children).forEach((child, i) => {
+                    debug += `   [${i}] ${child.tagName} - ${child.textContent}\n`;
+                });
+            }
+
+            output.textContent = debug;
+        }
+    </script>
+
+    <script src="user-navigation.js?v=4"></script>
+
+    <script>
+        // Auto-run debug after 1 second
+        setTimeout(runDebug, 1000);
+    </script>
+</body>
+
+</html>

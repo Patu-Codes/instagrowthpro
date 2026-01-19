@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>COMPLETE SESSION DIAGNOSTIC</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #000;
+            color: #0f0;
+        }
+
+        .panel {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #8B5CF6;
+        }
+
+        .good {
+            color: #10B981;
+            font-weight: bold;
+        }
+
+        .bad {
+            color: #EF4444;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #F59E0B;
+        }
+
+        button {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+
+        h2 {
+            color: #8B5CF6;
+            margin-top: 0;
+        }
+
+        .step {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #8B5CF6;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            background: #1a1a2e;
+            border: 1px solid #8B5CF6;
+            color: white;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔬 COMPLETE SESSION DIAGNOSTIC</h1>
+
+    <div class="step">
+        <h3>STEP 1: Login and Save Session</h3>
+        <input type="text" id="username" placeholder="Username" value="prathamesh0045k@gmail.com">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="doLogin()">LOGIN NOW</button>
+        <pre id="loginResult">Enter credentials and click LOGIN</pre>
+    </div>
+
+    <div class="panel">
+        <h2>LIVE MONITORING</h2>
+        <button onclick="checkEverything()">Refresh Check</button>
+        <button onclick="clearEverything()">Clear All Data</button>
+        <pre id="liveStatus">Checking...</pre>
+    </div>
+
+    <div class="panel">
+        <h2>COOKIE TEST</h2>
+        <button onclick="setCookieTest()">1. Set Test Cookie</button>
+        <button onclick="checkCookieTest()">2. Check Test Cookie</button>
+        <p style="color: #F59E0B">⚠️ After step 1, CLOSE THIS TAB and REOPEN to test if cookies survive!</p>
+        <pre id="cookieTest">Click button to test cookies...</pre>
+    </div>
+
+    <div class="panel">
+        <h2>SCRIPTS LOADED CHECK</h2>
+        <pre id="scriptsCheck">Checking...</pre>
+    </div>
+
+    <div class="panel">
+        <h2>DETAILED LOGS</h2>
+        <pre id="logs">Starting diagnostic...</pre>
+    </div>
+
+    <script src="api-client.js?v=cookies"></script>
+
+    <script>
+        const logs = document.getElementById('logs');
+        let logIndex = 0;
+
+        function log(msg, type = 'info') {
+            logIndex++;
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = { info: '#0f0', error: '#EF4444', warning: '#F59E0B', success: '#10B981' };
+            const color = colors[type] || colors.info;
+            logs.innerHTML += `<span style="color: ${color}">[${logIndex}] [${timestamp}] ${msg}</span>\n`;
+            logs.scrollTop = logs.scrollHeight;
+            console.log(`[${logIndex}]`, msg);
+        }
+
+        // Check what's actually loaded
+        function checkScripts() {
+            const result = document.getElementById('scriptsCheck');
+            let output = 'Loaded Objects:\n';
+            output += `- window.api: ${typeof window.api}\n`;
+            output += `- api.setCookie: ${typeof window.api?.setCookie}\n`;
+            output += `- api.getCookie: ${typeof window.api?.getCookie}\n`;
+            output += `- api.getCurrentUser: ${typeof window.api?.getCurrentUser}\n`;
+            output += `- api.login: ${typeof window.api?.login}\n`;
+
+            if (typeof window.api === 'undefined') {
+                output += '\n❌ API CLIENT NOT LOADED!';
+            } else if (!window.api.setCookie) {
+                output += '\n❌ COOKIE METHODS MISSING! Old version loaded!';
+            } else {
+                output += '\n✅ API client with cookies loaded correctly';
+            }
+
+            result.textContent = output;
+            log('Script check complete', 'info');
+        }
+
+        async function doLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                resultDiv.textContent = '❌ Enter username and password!';
+                resultDiv.className = 'bad';
+                return;
+            }
+
+            resultDiv.textContent = 'Logging in...\n';
+            log(`Attempting login: ${username}`, 'info');
+
+            try {
+                // Login
+                const result = await window.api.login(username, password);
+
+                log('✅ Login API call successful', 'success');
+
+                // Immediately check what was saved
+                setTimeout(() => {
+                    checkEverything();
+
+                    resultDiv.className = 'good';
+                    resultDiv.textContent = `✅ LOGIN SUCCESSFUL!\n\nUsername: ${result.profile.username}\nToken: ${result.token.substring(0, 30)}...\n\nNow checking what was saved...`;
+
+                    log('Session saved, checking storage...', 'info');
+                }, 500);
+
+            } catch (error) {
+                resultDiv.className = 'bad';
+                resultDiv.textContent = `❌ LOGIN FAILED\n${error.message}`;
+                log(`❌ Login failed: ${error.message}`, 'error');
+            }
+        }
+
+        function checkEverything() {
+            const output = document.getElementById('liveStatus');
+
+            log('=== CHECKING EVERYTHING ===', 'info');
+
+            // 1. Check localStorage
+            const lsToken = localStorage.getItem('authToken');
+            const lsUser = localStorage.getItem('currentUser');
+
+            // 2. Check cookies using API methods
+            let cookieToken = null;
+            let cookieUser = null;
+
+            if (window.api && window.api.getCookie) {
+                cookieToken = window.api.getCookie('sessionToken');
+                cookieUser = window.api.getCookie('sessionUser');
+            }
+
+            // 3. Check document.cookie directly
+            const rawCookies = document.cookie;
+
+            let result = `[${new Date().toLocaleTimeString()}] STATUS CHECK\n`;
+            result += `═══════════════════════════════════════\n\n`;
+
+            // localStorage check
+            result += `📦 LOCALSTORAGE:\n`;
+            result += `  authToken: ${lsToken ? '✅ EXISTS (' + lsToken.substring(0, 20) + '...)' : '❌ MISSING'}\n`;
+            result += `  currentUser: ${lsUser ? '✅ EXISTS' : '❌ MISSING'}\n`;
+
+            if (lsUser) {
+                try {
+                    const user = JSON.parse(lsUser);
+                    result += `  → Username: ${user.username}\n`;
+                    log(`LocalStorage has user: ${user.username}`, 'success');
+                } catch (e) {
+                    result += `  → ERROR parsing user\n`;
+                    log('LocalStorage user data corrupted', 'error');
+                }
+            } else {
+                log('LocalStorage is EMPTY', 'warning');
+            }
+
+            result += `\n🍪 COOKIES (via API):\n`;
+            result += `  sessionToken: ${cookieToken ? '✅ EXISTS (' + cookieToken.substring(0, 20) + '...)' : '❌ MISSING'}\n`;
+            result += `  sessionUser: ${cookieUser ? '✅ EXISTS' : '❌ MISSING'}\n`;
+
+            if (cookieUser) {
+                try {
+                    const user = JSON.parse(cookieUser);
+                    result += `  → Username: ${user.username}\n`;
+                    log(`Cookies have user: ${user.username}`, 'success');
+                } catch (e) {
+                    result += `  → ERROR parsing cookie user\n`;
+                    log('Cookie user data corrupted', 'error');
+                }
+            } else {
+                log('Cookies are EMPTY or API methods missing', 'warning');
+            }
+
+            result += `\n📝 RAW COOKIES:\n  ${rawCookies || '(empty)'}\n`;
+
+            // Final verdict
+            result += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            if ((lsToken && lsUser) || (cookieToken && cookieUser)) {
+                result += `✅ SESSION EXISTS - Should be logged in!\n`;
+                log('✅ SESSION FOUND', 'success');
+            } else {
+                result += `❌ NO SESSION - User needs to login\n`;
+                log('❌ NO SESSION DATA', 'error');
+            }
+
+            output.textContent = result;
+        }
+
+        function setCookieTest() {
+            // Set test cookie
+            const testValue = 'TEST_' + Date.now();
+
+            if (window.api && window.api.setCookie) {
+                window.api.setCookie('persistenceTest', testValue, 30);
+                document.getElementById('cookieTest').textContent =
+                    `✅ Test cookie set!\n\nValue: ${testValue}\n\n` +
+                    `NOW:\n` +
+                    `1. CLOSE this tab completely\n` +
+                    `2. REOPEN: http://localhost:8000/deep-storage-investigation.html\n` +
+                    `3. Click "2. Check Test Cookie"\n` +
+                    `4. If it shows the same value → Cookies work!\n` +
+                    `5. If it's gone → Browser is clearing cookies too!`;
+
+                log(`Test cookie set: ${testValue}`, 'success');
+            } else {
+                document.getElementById('cookieTest').textContent =
+                    `❌ Cookie methods not available!\nAPI client may not be loaded correctly.`;
+                log('Cookie methods missing!', 'error');
+            }
+        }
+
+        function checkCookieTest() {
+            if (window.api && window.api.getCookie) {
+                const value = window.api.getCookie('persistenceTest');
+
+                if (value) {
+                    document.getElementById('cookieTest').className = 'good';
+                    document.getElementById('cookieTest').textContent =
+                        `✅ TEST PASSED!\n\nCookie value: ${value}\n\n` +
+                        `✅ Cookies ARE persisting!\n` +
+                        `This means cookies work on your browser.\n\n` +
+                        `If login still doesn't persist, the issue is in the code, not the browser.`;
+                    log('✅ Test cookie found - cookies work!', 'success');
+                } else {
+                    document.getElementById('cookieTest').className = 'bad';
+                    document.getElementById('cookieTest').textContent =
+                        `❌ TEST FAILED!\n\nCookie not found.\n\n` +
+                        `This means:\n` +
+                        `1. Browser is clearing cookies too, OR\n` +
+                        `2. You didn't close/reopen the tab, OR\n` +
+                        `3. Cookies are disabled\n\n` +
+                        `Check browser settings!`;
+                    log('❌ Test cookie NOT found', 'error');
+                }
+            } else {
+                document.getElementById('cookieTest').textContent = '❌ Cookie methods not available!';
+                log('Cookie methods missing!', 'error');
+            }
+        }
+
+        function clearEverything() {
+            localStorage.clear();
+
+            if (window.api) {
+                if (window.api.deleteCookie) {
+                    window.api.deleteCookie('sessionToken');
+                    window.api.deleteCookie('sessionUser');
+                    window.api.deleteCookie('persistenceTest');
+                }
+            }
+
+            log('🗑️ Cleared all data', 'warning');
+            checkEverything();
+        }
+
+        // Initialize
+        window.onload = () => {
+            log('Diagnostic page loaded', 'info');
+            checkScripts();
+            checkEverything();
+
+            // Monitor changes
+            setInterval(() => {
+                // Silent check
+            }, 5000);
+        };
+    </script>
+</body>
+
+</html>

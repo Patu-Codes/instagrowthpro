@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Admin Panel</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">InstaGrowth Admin</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>All Orders</span>
+                </a>
+                <a href="users.html" class="nav-item active">
+                    <span class="nav-icon">👥</span>
+                    <span>Users</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <div class="topbar">
+                <div class="page-title">
+                    <h1>User Management</h1>
+                    <p>View all registered users</p>
+                </div>
+                <div class="admin-info">
+                    <div class="admin-avatar">👨‍💼</div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">All Users (<span id="userCount">0</span>)</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Profile ID</th>
+                            <th>Orders Count</th>
+                            <th>Total Spent</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (!sessionStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+
+        function loadUsers() {
+            const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+            const tbody = document.getElementById('usersTableBody');
+            document.getElementById('userCount').textContent = profiles.length;
+
+            tbody.innerHTML = profiles.map(profile => {
+                const ordersCount = profile.orders ? profile.orders.length : 0;
+                const totalSpent = profile.orders ? profile.orders.reduce((sum, o) => sum + (o.amount || 0), 0) : 0;
+                const date = new Date(profile.createdAt).toLocaleDateString();
+
+                return `
+                    <tr>
+                        <td><strong>@${profile.username}</strong></td>
+                        <td style="font-family: monospace; font-size: 0.875rem;">${profile.id.substring(0, 20)}...</td>
+                        <td><strong>${ordersCount}</strong></td>
+                        <td><strong style="color: #10B981;">₹${totalSpent}</strong></td>
+                        <td>${date}</td>
+                        <td>
+                            <a href="orders.html?user=${profile.username}" class="btn-action">View Orders</a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function logout() {
+            if (confirm('Logout?')) {
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            }
+        }
+
+        loadUsers();
+    </script>
+</body>
+
+</html>

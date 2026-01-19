@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Storage Bridge</title>
+</head>
+
+<body>
+    <script>
+        // This page exists to provide localStorage access to admin panel
+        console.log('🌉 Storage bridge active');
+
+        // Allow parent to access our localStorage
+        window.addEventListener('message', (event) => {
+            // Security: Only accept from localhost
+            if (!event.origin.includes('localhost')) return;
+
+            const { action, key, value } = event.data;
+
+            if (action === 'get') {
+                const data = localStorage.getItem(key);
+                event.source.postMessage({ action: 'get', key, value: data }, event.origin);
+            } else if (action === 'set') {
+                localStorage.setItem(key, value);
+                event.source.postMessage({ action: 'set', key, success: true }, event.origin);
+            }
+        });
+    </script>
+</body>
+
+</html>

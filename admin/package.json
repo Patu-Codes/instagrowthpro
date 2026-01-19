@@ -1,0 +1,19 @@
+{
+    "$schema": "https://json.schemastore.org/package.json",
+    "name": "instagrowth-pro-admin",
+    "version": "1.0.0",
+    "description": "InstaGrowth Pro - Admin Panel",
+    "private": true,
+    "scripts": {
+        "dev": "python -m http.server 8001",
+        "preview": "python -m http.server 8001"
+    },
+    "keywords": [
+        "instagram",
+        "admin",
+        "dashboard",
+        "management"
+    ],
+    "author": "NeoMatrix.Studio",
+    "license": "MIT"
+}

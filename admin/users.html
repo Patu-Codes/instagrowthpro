@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Admin Panel</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">InstaGrowth Admin</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>All Orders</span>
+                </a>
+                <a href="users.html" class="nav-item active">
+                    <span class="nav-icon">👥</span>
+                    <span>Users</span>
+                </a>
+                <a href="live-chat.html" class="nav-item">
+                    <span class="nav-icon">💬</span>
+                    <span>Live Chat</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <div class="topbar">
+                <div class="page-title">
+                    <h1>User Management</h1>
+                    <p>View all registered users</p>
+                </div>
+                <div class="admin-info">
+                    <div class="admin-avatar">👨‍💼</div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">All Users (<span id="userCount">0</span>)</h2>
+                    <button class="btn-primary" onclick="loadUsers()">🔄 Refresh</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Profile ID</th>
+                            <th>Device ID</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 3rem;">
+                                Loading users...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (!sessionStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+
+        async function loadUsers() {
+            const tbody = document.getElementById('usersTableBody');
+
+            try {
+                console.log('📥 Loading users from API...');
+
+                const response = await fetch('http://localhost:3000/api/profiles');
+                if (!response.ok) throw new Error('Failed to load users');
+
+                const profiles = await response.json();
+
+                console.log(`✅ Loaded ${profiles.length} users`);
+
+                document.getElementById('userCount').textContent = profiles.length;
+
+                if (profiles.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 3rem;">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+                                <div style="color: var(--text-secondary);">No users yet</div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = profiles.map(profile => {
+                    const date = new Date(profile.createdAt).toLocaleString();
+
+                    return `
+                        <tr>
+                            <td><strong>@${profile.username}</strong></td>
+                            <td style="font-family: monospace; font-size: 0.875rem;">${profile.id.substring(0, 20)}...</td>
+                            <td style="font-family: monospace; font-size: 0.875rem;">${profile.deviceId ? profile.deviceId.substring(0, 15) + '...' : 'N/A'}</td>
+                            <td>${date}</td>
+                            <td>
+                                <button class="btn-delete" onclick="deleteUser('${profile.id}', '@${profile.username}')" style="background: linear-gradient(135deg, #EF4444, #DC2626); padding: 0.5rem 1rem; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading users:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 3rem; color: #EF4444;">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">❌</div>
+                            <div>Failed to load users</div>
+                            <div style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.7;">Make sure backend server is running</div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function logout() {
+            if (confirm('Logout?')) {
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            }
+        }
+
+        async function deleteUser(userId, username) {
+            if (!confirm(`Are you sure you want to delete user ${username}?\n\nThis will also delete all their orders!\n\nThis action cannot be undone!`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    window.modal.success(`User ${username} deleted successfully`, 'Deleted');
+                    // Reload users to refresh the list
+                    loadUsers();
+                } else {
+                    window.modal.error('Failed to delete user: ' + (data.error || 'Unknown error'), 'Error');
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                window.modal.error('Failed to delete user. Please try again.', 'Error');
+            }
+        }
+
+        // Load on startup
+        loadUsers();
+    </script>
+</body>
+
+</html>

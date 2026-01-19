@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Profile Import/Export System</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .section {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #8B5CF6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .btn-export {
+            background: #10B981;
+        }
+
+        .btn-import {
+            background: #3B82F6;
+        }
+
+        .btn-auto {
+            background: #F59E0B;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 300px;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+        }
+
+        .warning {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #EF4444;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>💾 Profile Import/Export System</h1>
+
+    <div class="warning">
+        <strong>⚠️ BROWSER ISSUE DETECTED</strong><br>
+        Your browser clears localStorage when you close it.<br>
+        Use this tool to save/load your profiles manually.
+    </div>
+
+    <div class="section">
+        <h2>📥 Export Profiles (Save to File)</h2>
+        <p>Download your profiles as a JSON file. Save this file somewhere safe!</p>
+        <button class="btn-export" onclick="exportProfiles()">📥 Export Profiles to File</button>
+        <pre id="exportOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>📤 Import Profiles (Load from File)</h2>
+        <p>Upload a previously saved profiles file to restore your data.</p>
+        <input type="file" id="importFile" accept=".json">
+        <button class="btn-import" onclick="importProfiles()">📤 Import Profiles from File</button>
+        <pre id="importOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>🔄 Auto-Save on Every Change</h2>
+        <p>Enable this to automatically download a backup file whenever you create a profile or order.</p>
+        <button class="btn-auto" onclick="toggleAutoSave()" id="autoSaveBtn">Enable Auto-Save</button>
+        <pre id="autoSaveStatus">Auto-save: Disabled</pre>
+    </div>
+
+    <div class="section">
+        <h2>📋 Current Profiles</h2>
+        <button onclick="viewCurrentProfiles()">View Current Profiles</button>
+        <pre id="currentProfiles"></pre>
+    </div>
+
+    <script>
+        function exportProfiles() {
+            const output = document.getElementById('exportOutput');
+
+            try {
+                // Get all localStorage data
+                const data = {
+                    profiles: JSON.parse(localStorage.getItem('profiles') || '[]'),
+                    deviceId: localStorage.getItem('deviceId'),
+                    currentUser: JSON.parse(localStorage.getItem('currentUser') || 'null'),
+                    exportDate: new Date().toISOString()
+                };
+
+                // Create JSON file
+                const json = JSON.stringify(data, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                // Create download link
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `instagrowth-profiles-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+
+                output.style.color = '#10B981';
+                output.textContent = `✅ Exported successfully!\n\n`;
+                output.textContent += `Profiles: ${data.profiles.length}\n`;
+                output.textContent += `File saved as: ${a.download}\n\n`;
+                output.textContent += `⚠️ KEEP THIS FILE SAFE! You'll need it next time you open the browser.`;
+
+            } catch (error) {
+                output.style.color = '#EF4444';
+                output.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function importProfiles() {
+            const output = document.getElementById('importOutput');
+            const fileInput = document.getElementById('importFile');
+
+            if (!fileInput.files.length) {
+                output.style.color = '#EF4444';
+                output.textContent = '❌ Please select a file first!';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    // Restore data to localStorage
+                    if (data.profiles) {
+                        localStorage.setItem('profiles', JSON.stringify(data.profiles));
+                    }
+                    if (data.deviceId) {
+                        localStorage.setItem('deviceId', data.deviceId);
+                    }
+                    if (data.currentUser) {
+                        localStorage.setItem('currentUser', JSON.stringify(data.currentUser));
+                    }
+
+                    output.style.color = '#10B981';
+                    output.textContent = `✅ Import successful!\n\n`;
+                    output.textContent += `Profiles restored: ${data.profiles ? data.profiles.length : 0}\n`;
+                    output.textContent += `Export date: ${data.exportDate || 'Unknown'}\n\n`;
+                    output.textContent += `✅ You can now login with your restored profiles!`;
+
+                    viewCurrentProfiles();
+
+                } catch (error) {
+                    output.style.color = '#EF4444';
+                    output.textContent = `❌ Error: ${error.message}\n\nMake sure you selected a valid profiles file.`;
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        function toggleAutoSave() {
+            const enabled = localStorage.getItem('autoSaveEnabled') === 'true';
+            const newState = !enabled;
+
+            localStorage.setItem('autoSaveEnabled', newState.toString());
+
+            const btn = document.getElementById('autoSaveBtn');
+            const status = document.getElementById('autoSaveStatus');
+
+            if (newState) {
+                btn.textContent = 'Disable Auto-Save';
+                btn.style.background = '#EF4444';
+                status.textContent = 'Auto-save: ✅ Enabled\n\nProfiles will automatically download as a backup file whenever you make changes.';
+                status.style.color = '#10B981';
+            } else {
+                btn.textContent = 'Enable Auto-Save';
+                btn.style.background = '#F59E0B';
+                status.textContent = 'Auto-save: ❌ Disabled';
+                status.style.color = '#EF4444';
+            }
+        }
+
+        function viewCurrentProfiles() {
+            const output = document.getElementById('currentProfiles');
+            const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+
+            if (profiles.length === 0) {
+                output.style.color = '#EF4444';
+                output.textContent = 'No profiles found.\n\nImport a backup file or register a new profile.';
+                return;
+            }
+
+            output.style.color = '#10B981';
+            output.textContent = `Found ${profiles.length} profile(s):\n\n`;
+
+            profiles.forEach((p, i) => {
+                output.textContent += `${i + 1}. ${p.username}\n`;
+                output.textContent += `   Password: ${p.password}\n`;
+                output.textContent += `   Orders: ${p.orders ? p.orders.length : 0}\n`;
+                output.textContent += `   Created: ${new Date(p.createdAt).toLocaleDateString()}\n\n`;
+            });
+        }
+
+        // Initialize
+        viewCurrentProfiles();
+
+        // Check auto-save status
+        if (localStorage.getItem('autoSaveEnabled') === 'true') {
+            document.getElementById('autoSaveBtn').textContent = 'Disable Auto-Save';
+            document.getElementById('autoSaveBtn').style.background = '#EF4444';
+            document.getElementById('autoSaveStatus').textContent = 'Auto-save: ✅ Enabled';
+            document.getElementById('autoSaveStatus').style.color = '#10B981';
+        }
+    </script>
+</body>
+
+</html>

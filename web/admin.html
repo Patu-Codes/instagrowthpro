@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - InstaGrowth Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <img src="logo.png" alt="InstaGrowthPro Logo"
+                        style="height: 50px; width: auto; border-radius: 50%; margin-right: 10px;">
+                    <span class="logo-text">InstaGrowth<span class="pro">Pro</span></span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="admin.html" class="nav-link active">Admin Panel</a>
+                </div>
+                <button class="btn btn-secondary" onclick="refreshOrders()">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M14 8a6 6 0 1 1-1.76-4.24M14 2v4h-4" stroke="currentColor" stroke-width="2" />
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Section -->
+    <section class="admin-section">
+        <div class="container">
+            <div class="admin-header">
+                <div>
+                    <h1 class="page-title">Admin Dashboard</h1>
+                    <p class="page-subtitle">Manage orders and track delivery status</p>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon pending-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="2" />
+                            <path d="M16 8v8l4 4" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="pendingCount">0</div>
+                        <div class="stat-label">Pending Orders</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon processing-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path
+                                d="M16 4v4M16 24v4M6 16h4M22 16h4M9.2 9.2l2.8 2.8M20 20l2.8 2.8M9.2 22.8l2.8-2.8M20 12l2.8-2.8"
+                                stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="processingCount">0</div>
+                        <div class="stat-label">Processing</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon completed-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="2" />
+                            <path d="M10 16l4 4 8-8" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="completedCount">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon revenue-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path
+                                d="M16 6v20M22 10c0-1.5-2.7-3-6-3s-6 1.5-6 3 2.7 3 6 3 6-1.5 6-3zM22 16c0 1.5-2.7 3-6 3s-6-1.5-6-3M22 22c0 1.5-2.7 3-6 3s-6-1.5-6-3"
+                                stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalRevenue">₹0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Filter by Status:</label>
+                    <select id="statusFilter" class="filter-select" onchange="filterOrders()">
+                        <option value="all">All Orders</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="search-box">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="2" />
+                        <path d="M14 14l4 4" stroke="currentColor" stroke-width="2" />
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search by order ID or username..."
+                        oninput="filterOrders()">
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="orders-container">
+                <div class="table-header">
+                    <h2>Recent Orders</h2>
+                    <span class="order-count" id="displayedCount">0 orders</span>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Username</th>
+                                <th>Package</th>
+                                <th>Amount</th>
+                                <th>Email/WhatsApp</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr class="empty-state">
+                                <td colspan="8">
+                                    <div class="empty-message">
+                                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                                            <circle cx="32" cy="32" r="30" stroke="var(--glass-border)"
+                                                stroke-width="2" />
+                                            <path d="M32 20v16M32 44h.02" stroke="var(--text-secondary)"
+                                                stroke-width="3" />
+                                        </svg>
+                                        <h3>No orders found</h3>
+                                        <p>Orders will appear here once customers place them</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Order details will be injected here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

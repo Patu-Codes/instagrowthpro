@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Orders.js</title>
+</head>
+<body>
+    <h1>Testing orders.js</h1>
+    <div id="ordersTableBody"></div>
+    <div id="orderCount">0</div>
+    <script>
+        console.log('Starting test...');
+        
+        // Test API call
+        fetch('http://localhost:3000/api/orders')
+            .then(r => {
+                console.log('Response status:', r.status);
+                return r.json();
+            })
+            .then(orders => {
+                console.log('Orders received:', orders);
+                console.log('Number of orders:', orders.length);
+                if (orders.length > 0) {
+                    console.log('First order:', orders[0]);
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+            });
+    </script>
+</body>
+</html>

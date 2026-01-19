@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Quick API Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #000;
+            color: #0f0;
+        }
+
+        button {
+            background: #0f0;
+            color: #000;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #111;
+            padding: 10px;
+            border: 1px solid #0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Quick API Test</h1>
+
+    <button onclick="testAPI()">Test API Connection</button>
+    <button onclick="hardRefresh()">Hard Refresh Admin</button>
+
+    <pre id="output">Click button to test...</pre>
+
+    <script>
+        async function testAPI() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...\n\n';
+
+            try {
+                // Test 1: Can we reach backend?
+                output.textContent += '1. Testing backend connection...\n';
+                const response = await fetch('http://localhost:3000/api/profiles');
+                output.textContent += `   Status: ${response.status} ${response.statusText}\n`;
+
+                // Test 2: Can we read the data?
+                output.textContent += '\n2. Reading response...\n';
+                const data = await response.json();
+                output.textContent += `   Profiles found: ${data.length}\n\n`;
+
+                // Test 3: Show the data
+                output.textContent += '3. Profile data:\n';
+                output.textContent += JSON.stringify(data, null, 2);
+
+            } catch (error) {
+                output.textContent += '\n❌ ERROR:\n' + error.toString();
+            }
+        }
+
+        function hardRefresh() {
+            // Clear cache and reload admin panel
+            if (confirm('This will clear cache and reload admin panel. Continue?')) {
+                window.open('http://localhost:8001/users.html', '_blank');
+            }
+        }
+
+        // Auto-test on load
+        testAPI();
+    </script>
+</body>
+
+</html>

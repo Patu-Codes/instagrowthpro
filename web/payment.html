@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - InstaGrowth Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="payment.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <img src="logo.png" alt="InstaGrowthPro Logo"
+                        style="height: 50px; width: auto; border-radius: 50%; margin-right: 10px;">
+                    <span class="logo-text">InstaGrowth<span class="pro">Pro</span></span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="order.html" class="nav-link">Order</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Payment Section -->
+    <section class="payment-section">
+        <div class="container">
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="step completed">
+                    <div class="step-circle">✓</div>
+                    <div class="step-label">Order Details</div>
+                </div>
+                <div class="step-line completed"></div>
+                <div class="step active">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Payment</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
+            </div>
+
+            <div class="payment-container">
+                <!-- Payment Methods -->
+                <div class="payment-wrapper">
+                    <h1 class="page-title">Complete Payment</h1>
+                    <p class="page-subtitle">Choose your preferred payment method</p>
+
+                    <!-- Order Info Card -->
+                    <div class="order-info-card">
+                        <div class="order-info-header">
+                            <h3>Order Details</h3>
+                            <span class="order-id" id="orderId">Order #XXXXX</span>
+                        </div>
+                        <div class="order-info-body">
+                            <div class="info-item">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <rect x="2" y="2" width="16" height="16" rx="4" stroke="#8B5CF6" stroke-width="2" />
+                                    <circle cx="10" cy="8" r="2" stroke="#8B5CF6" stroke-width="2" />
+                                    <path d="M6 15c0-2 1.5-3 4-3s4 1 4 3" stroke="#8B5CF6" stroke-width="2" />
+                                </svg>
+                                <span class="info-label">Instagram:</span>
+                                <span class="info-value" id="displayUsername">@username</span>
+                            </div>
+                            <div class="info-item">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <rect x="3" y="6" width="14" height="10" rx="2" stroke="#8B5CF6" stroke-width="2" />
+                                    <path d="M6 6V5c0-1.5 1-3 4-3s4 1.5 4 3v1" stroke="#8B5CF6" stroke-width="2" />
+                                </svg>
+                                <span class="info-label">Package:</span>
+                                <span class="info-value" id="displayPackage">Loading...</span>
+                            </div>
+                            <div class="info-item total-amount">
+                                <span class="info-label">Total Amount:</span>
+                                <span class="info-value amount" id="displayAmount">₹Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Disclaimer -->
+                    <div class="disclaimer-card"
+                        style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1)); border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 16px; padding: 1.5rem; margin: 2rem 0;">
+                        <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                style="flex-shrink: 0; margin-top: 0.25rem;">
+                                <circle cx="16" cy="16" r="14" stroke="#8B5CF6" stroke-width="2" />
+                                <path d="M16 10v8M16 22h.01" stroke="#8B5CF6" stroke-width="2.5"
+                                    stroke-linecap="round" />
+                            </svg>
+                            <div>
+                                <h3
+                                    style="color: #8B5CF6; font-size: 1.25rem; font-weight: 700; margin: 0 0 0.75rem 0;">
+                                    📋 Payment Instructions & Important Information
+                                </h3>
+                                <div style="color: rgba(255,255,255,0.9); line-height: 1.8; font-size: 0.95rem;">
+                                    <p style="margin: 0 0 1rem 0; font-weight: 600; color: #EC4899;">
+                                        🔸 How Payment Works:
+                                    </p>
+                                    <ul style="margin: 0 0 1rem 0; padding-left: 1.5rem; list-style: none;">
+                                        <li style="margin-bottom: 0.5rem; position: relative; padding-left: 1.5rem;">
+                                            <span style="position: absolute; left: 0; color: #10B981;">✓</span>
+                                            Scan the QR code using any UPI app (GPay, PhonePe, Paytm, etc.)
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem; position: relative; padding-left: 1.5rem;">
+                                            <span style="position: absolute; left: 0; color: #10B981;">✓</span>
+                                            Or manually enter the UPI ID shown below
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem; position: relative; padding-left: 1.5rem;">
+                                            <span style="position: absolute; left: 0; color: #10B981;">✓</span>
+                                            Complete the payment in your UPI app
+                                        </li>
+                                    </ul>
+
+                                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem; font-size: 0.9rem;">
+                                        Enter your UPI ID to open your UPI app with pre-filled payment details
+                                    </p>
+                                    <p style="margin: 1rem 0 0.5rem 0; font-weight: 600; color: #EC4899;">
+                                        🔸 After Making Payment:
+                                    </p>
+                                    <ul style="margin: 0 0 1rem 0; padding-left: 1.5rem; list-style: none;">
+                                        <li style="margin-bottom: 0.5rem; position: relative; padding-left: 1.5rem;">
+                                            <span style="position: absolute; left: 0; color: #F59E0B;">①</span>
+                                            Click the <strong>"I've Completed Payment"</strong> button below
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem; position: relative; padding-left: 1.5rem;">
+                                            <span style="position: absolute; left: 0; color: #F59E0B;">②</span>
+                                            Your order will be registered in our system
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem; position: relative; padding-left: 1.5rem;">
+                                            <span style="position: absolute; left: 0; color: #F59E0B;">③</span>
+                                            We'll verify your payment within <strong>10 minutes</strong>
+                                        </li>
+                                        <li style="margin-bottom: 0.5rem; position: relative; padding-left: 1.5rem;">
+                                            <span style="position: absolute; left: 0; color: #F59E0B;">④</span>
+                                            Start sending followers on your provided account <strong>instantly</strong>
+                                        </li>
+                                    </ul>
+
+                                    <div
+                                        style="background: rgba(239, 68, 68, 0.15); border-left: 4px solid #EF4444; padding: 1rem; margin-top: 1rem; border-radius: 8px;">
+                                        <span
+                                            style="font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #8B5CF6, #EC4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                            ₹<span id="displayAmount">Loading...</span>
+                                        </span>
+                                        <ul
+                                            style="margin: 0.5rem 0 0 0; padding-left: 1.5rem; list-style: disc; color: rgba(255,255,255,0.85);">
+                                            <li style="margin-bottom: 0.25rem;">Do NOT close this page before clicking
+                                                "I've Completed Payment"</li>
+                                            <li style="margin-bottom: 0.25rem;">Keep your payment screenshot for
+                                                reference</li>
+                                            <li style="margin-bottom: 0.25rem;">If payment is not verified, contact
+                                                support with your order ID</li>
+                                            <li style="margin-bottom: 0.25rem;"><strong>Even if you click "I've
+                                                    Completed Payment" without making payment, your order will be
+                                                    rejected and deleted instantly. We verify order details and payment
+                                                    details on every order, so please be honest.</strong></li>
+                                            <li>All payments are 100% secure and encrypted</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Methods -->
+                    <div class="payment-methods">
+                        <!-- UPI Payment (Active) -->
+                        <div class="payment-method active" data-method="upi">
+                            <div class="method-header">
+                                <input type="radio" name="payment" id="upi" checked>
+                                <label for="upi">
+                                    <div class="method-icon">
+                                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                            <rect width="32" height="32" rx="6" fill="url(#gradient-upi)" />
+                                            <path d="M8 16h16M16 8v16" stroke="white" stroke-width="3"
+                                                stroke-linecap="round" />
+                                            <defs>
+                                                <linearGradient id="gradient-upi" x1="0" y1="0" x2="32" y2="32">
+                                                    <stop offset="0%" stop-color="#00C853" />
+                                                    <stop offset="100%" stop-color="#00E676" />
+                                                </linearGradient>
+                                            </defs>
+                                        </svg>
+                                    </div>
+                                    <div class="method-info">
+                                        <div class="method-name">UPI Payment</div>
+                                        <div class="method-description">Pay via any UPI app</div>
+                                    </div>
+                                </label>
+                                <div class="method-badge">Recommended</div>
+                            </div>
+                            <div class="method-content">
+                                <div class="upi-payment">
+                                    <div class="qr-container">
+                                        <div class="qr-header">
+                                            <h3>Scan QR Code</h3>
+                                            <p>Use any UPI app to scan and pay</p>
+                                        </div>
+                                        <div class="qr-code">
+                                            <img src="qr-code.jpg" alt="UPI QR Code" id="qrCodeImage">
+                                        </div>
+                                        <div class="upi-apps">
+                                            <span>Supported apps:</span>
+                                            <div class="app-icons">
+                                                <div class="app-icon">GPay</div>
+                                                <div class="app-icon">PhonePe</div>
+                                                <div class="app-icon">Paytm</div>
+                                                <div class="app-icon">BHIM</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="payment-divider">
+                                        <span>OR</span>
+                                    </div>
+
+                                    <div class="manual-upi">
+                                        <div class="upi-input-header">
+                                            <h4>Pay to UPI ID</h4>
+                                            <p>Enter recipient's UPI ID and send payment</p>
+                                        </div>
+
+                                        <div class="upi-input-group">
+                                            <input type="text" id="recipientUpiId"
+                                                placeholder="Enter your UPI ID (e.g., yourname@paytm)"
+                                                pattern="[a-zA-Z0-9._-]+@[a-zA-Z]+"
+                                                title="Enter a valid UPI ID (e.g., name@paytm)">
+                                            <button class="btn btn-upi btn-large btn-block" onclick="payToUpiId()">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                    <rect width="24" height="24" rx="4"
+                                                        fill="url(#gradient-btn-upi2)" />
+                                                    <path d="M6 12h12M12 6v12" stroke="white" stroke-width="2.5"
+                                                        stroke-linecap="round" />
+                                                    <defs>
+                                                        <linearGradient id="gradient-btn-upi2" x1="0" y1="0" x2="24"
+                                                            y2="24">
+                                                            <stop offset="0%" stop-color="#00C853" />
+                                                            <stop offset="100%" stop-color="#00E676" />
+                                                        </linearGradient>
+                                                    </defs>
+                                                </svg>
+                                                <span>Pay ₹<span id="upiInputAmount">349</span> via UPI ID</span>
+                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <path d="M7 14l5-5-5-5" stroke="currentColor" stroke-width="2"
+                                                        stroke-linecap="round" />
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <div class="upi-note">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                <circle cx="8" cy="8" r="7" stroke="#8B5CF6" stroke-width="1.5" />
+                                                <path d="M8 11V8M8 5h.01" stroke="#8B5CF6" stroke-width="1.5"
+                                                    stroke-linecap="round" />
+                                            </svg>
+                                            <div>
+                                                <span>Your UPI app will open with the payment details pre-filled.</span>
+                                                <br>
+                                                <span style="margin-top: 0.5rem; display: block;">💻 If you're on a
+                                                    laptop or PC, please use the <strong>Scan QR Code</strong> option
+                                                    above.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Razorpay (Coming Soon) -->
+                        <div class="payment-method disabled" data-method="razorpay">
+                            <div class="method-header">
+                                <input type="radio" name="payment" id="razorpay" disabled>
+                                <label for="razorpay">
+                                    <div class="method-icon">
+                                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                            <rect width="32" height="32" rx="6" fill="#3B82F6" />
+                                            <rect x="8" y="12" width="16" height="10" rx="2" stroke="white"
+                                                stroke-width="2" />
+                                            <rect x="8" y="16" width="16" height="2" fill="white" />
+                                        </svg>
+                                    </div>
+                                    <div class="method-info">
+                                        <div class="method-name">Card / Net Banking</div>
+                                        <div class="method-description">Credit/Debit cards, Net banking</div>
+                                    </div>
+                                </label>
+                                <div class="method-badge coming-soon">Coming Soon</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Confirmation -->
+                    <div class="payment-actions">
+                        <button class="btn btn-primary btn-large btn-block" onclick="confirmPayment()">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 10l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                            <span>I've Completed Payment</span>
+                        </button>
+                        <p class="payment-note">
+                            Click above after successfully completing the payment
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Payment Instructions -->
+                <div class="payment-sidebar">
+                    <div class="instruction-card">
+                        <h3 class="instruction-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="#8B5CF6" stroke-width="2" />
+                                <path d="M12 16v-4M12 8h.01" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                            Payment Instructions
+                        </h3>
+                        <ol class="instruction-list">
+                            <li>Open any UPI app on your phone</li>
+                            <li>Scan the QR code displayed</li>
+                            <li>Verify the amount</li>
+                            <li>Complete the payment</li>
+                            <li>After payment, go to bottom</li>
+                            <li>Click "I've Completed Payment" button</li>
+                        </ol>
+                    </div>
+
+                    <div class="security-card">
+                        <div class="security-header">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                <path d="M16 4L6 8v8c0 7 4.5 13.5 10 15 5.5-1.5 10-8 10-15V8l-10-4z" stroke="#10B981"
+                                    stroke-width="2" />
+                                <path d="M12 16l3 3 6-6" stroke="#10B981" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                            <h4>100% Secure Payment</h4>
+                        </div>
+                        <ul class="security-features">
+                            <li>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="7" fill="#10B981" fill-opacity="0.2" />
+                                    <path d="M5 8l2 2 4-4" stroke="#10B981" stroke-width="2" />
+                                </svg>
+                                SSL Encrypted
+                            </li>
+                            <li>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="7" fill="#10B981" fill-opacity="0.2" />
+                                    <path d="M5 8l2 2 4-4" stroke="#10B981" stroke-width="2" />
+                                </svg>
+                                No password required
+                            </li>
+                            <li>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="7" fill="#10B981" fill-opacity="0.2" />
+                                    <path d="M5 8l2 2 4-4" stroke="#10B981" stroke-width="2" />
+                                </svg>
+                                Instant processing
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="help-card">
+                        <h4>Need Help?</h4>
+                        <p>Contact our support team if you face any issues</p>
+                        <a href="contact-support.html" class="help-link">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                    stroke="#8B5CF6" stroke-width="2" />
+                            </svg>
+                            Contact Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Professional Modal System -->
+    <script src="modal-system.js?v=2"></script>
+
+    <!-- API Client -->
+    <script src="api-client.js?v=2"></script>
+
+    <!-- Payment Scripts -->
+    <script src="payment.js?v=2"></script>
+
+    <script>
+        // Payment Completion Handler - Uses API
+        window.confirmPayment = async function () {
+            console.log('💳 Payment confirmed - Saving to database...');
+
+            // Get pending order from sessionStorage
+            const orderData = JSON.parse(sessionStorage.getItem('pendingOrder'));
+
+            if (!orderData) {
+                await window.modal.error('Order data not found. Please start a new order.', 'Error');
+                window.location.href = 'order.html';
+                return;
+            }
+
+            try {
+                // Get current user from API
+                const currentUser = window.api.getCurrentUser();
+
+                if (!currentUser) {
+                    await window.modal.error('Please login to complete your order.', 'Not Logged In');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Create order object
+                const order = {
+                    orderId: 'ORD_' + Date.now(),
+                    profileId: currentUser.id,
+                    profileUsername: currentUser.username,
+                    username: orderData.username,
+                    profileLink: orderData.profileLink || '',
+                    whatsapp: orderData.whatsapp || '',
+                    packageName: orderData.packageName,
+                    followers: orderData.followers,
+                    amount: orderData.amount,
+                    status: 'pending_verification',
+                    createdAt: new Date().toISOString()
+                };
+
+                console.log('📤 Saving order to API...', order.orderId);
+
+                // Save order via API
+                await window.api.createOrder(order);
+
+                console.log('✅ ORDER SAVED TO DATABASE!', order.orderId);
+
+                // Store for confirmation page
+                sessionStorage.setItem('confirmedOrder', JSON.stringify(order));
+                sessionStorage.removeItem('pendingOrder');
+
+                // Redirect directly to confirmation page (no modal)
+                window.location.href = 'confirmation.html';
+
+            } catch (error) {
+                console.error('❌ Error saving order:', error);
+                await window.modal.error(
+                    'Failed to save your order. Please contact support with your payment screenshot.',
+                    'Error Saving Order'
+                );
+            }
+        };
+
+        console.log('✅ Payment confirmation handler loaded v639042686881431739 (API version)');
+    </script>
+
+</body>
+
+</html>

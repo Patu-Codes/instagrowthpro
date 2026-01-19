@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug Login</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .section {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #8B5CF6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background: #222;
+            color: white;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔧 Login Debug Tool</h1>
+
+    <div class="section">
+        <h2>Check Stored Profiles</h2>
+        <button onclick="checkProfiles()">View All Profiles</button>
+        <pre id="profilesOutput"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Test Login</h2>
+        <input type="text" id="testUsername" placeholder="Username">
+        <input type="password" id="testPassword" placeholder="Password">
+        <button onclick="testLogin()">Test Login</button>
+        <pre id="loginOutput"></pre>
+    </div>
+
+    <script>
+        function checkProfiles() {
+            const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+            const output = document.getElementById('profilesOutput');
+
+            if (profiles.length === 0) {
+                output.textContent = 'No profiles found!';
+                return;
+            }
+
+            const display = profiles.map((p, i) => ({
+                index: i,
+                username: p.username,
+                password: p.password,
+                id: p.id,
+                hasOrders: p.orders ? p.orders.length : 0
+            }));
+
+            output.textContent = JSON.stringify(display, null, 2);
+        }
+
+        function testLogin() {
+            const username = document.getElementById('testUsername').value.trim();
+            const password = document.getElementById('testPassword').value;
+            const output = document.getElementById('loginOutput');
+
+            if (!username || !password) {
+                output.textContent = 'Please enter username and password';
+                return;
+            }
+
+            const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+
+            output.textContent = `Testing login...\n\n`;
+            output.textContent += `Entered username: "${username}"\n`;
+            output.textContent += `Entered password: "${password}"\n`;
+            output.textContent += `Total profiles: ${profiles.length}\n\n`;
+
+            const profile = profiles.find(p => p.username === username);
+
+            if (!profile) {
+                output.textContent += `❌ Username "${username}" not found!\n\n`;
+                output.textContent += `Available usernames:\n`;
+                profiles.forEach(p => {
+                    output.textContent += `  - ${p.username}\n`;
+                });
+                return;
+            }
+
+            output.textContent += `✅ Username found!\n`;
+            output.textContent += `Stored password: "${profile.password}"\n`;
+            output.textContent += `Entered password: "${password}"\n`;
+            output.textContent += `Match: ${profile.password === password ? '✅ YES' : '❌ NO'}\n\n`;
+
+            if (profile.password === password) {
+                output.textContent += '✅ LOGIN SUCCESS!\n';
+                output.textContent += '\nYou can now login with these credentials.';
+            } else {
+                output.textContent += '❌ PASSWORD INCORRECT!\n';
+                output.textContent += '\nThe password does not match.';
+            }
+        }
+
+        // Auto-check on load
+        checkProfiles();
+    </script>
+</body>
+
+</html>

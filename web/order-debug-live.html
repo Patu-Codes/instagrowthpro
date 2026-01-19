@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Real-Time Order Debug</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #0a0a0f;
+            color: #0f0;
+        }
+
+        h1 {
+            color: #8B5CF6;
+        }
+
+        .status {
+            background: #1a1a2e;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .error {
+            color: #f00;
+        }
+
+        .success {
+            color: #0f0;
+        }
+
+        .warning {
+            color: #ff0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Real-Time Order Debugging</h1>
+
+    <div class="status">
+        <h3>Step 1: Check Login Status</h3>
+        <div id="loginStatus">Checking...</div>
+    </div>
+
+    <div class="status">
+        <h3>Step 2: Check Order Data</h3>
+        <div id="orderStatus">Checking...</div>
+    </div>
+
+    <div class="status">
+        <h3>Step 3: Test API Connection</h3>
+        <button onclick="testAPI()">Test API</button>
+        <div id="apiStatus">Click button to test...</div>
+    </div>
+
+    <div class="status">
+        <h3>Step 4: Complete Real Order</h3>
+        <button onclick="completeOrder()">Complete Order NOW</button>
+        <div id="completeStatus">Click button when ready...</div>
+    </div>
+
+    <div class="status">
+        <h3>Live Logs:</h3>
+        <pre id="logs">Logs will appear here...</pre>
+    </div>
+
+    <script src="modal-system.js"></script>
+    <script src="api-client.js"></script>
+
+    <script>
+        const logs = document.getElementById('logs');
+
+        function log(msg, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const line = `[${timestamp}] ${msg}\n`;
+            logs.textContent += line;
+            logs.scrollTop = logs.scrollHeight;
+            console.log(msg);
+        }
+
+        // Step 1: Check login
+        function checkLogin() {
+            const user = window.api.getCurrentUser();
+            const el = document.getElementById('loginStatus');
+
+            if (user) {
+                el.className = 'success';
+                el.innerHTML = `✅ Logged in as: <strong>${user.username}</strong><br>Profile ID: ${user.id}`;
+                log('✅ User logged in: ' + user.username);
+                return user;
+            } else {
+                el.className = 'error';
+                el.innerHTML = '❌ NOT LOGGED IN! <a href="login.html">Login here</a>';
+                log('❌ No user logged in');
+                return null;
+            }
+        }
+
+        // Step 2: Check order data
+        function checkOrderData() {
+            const orderData = sessionStorage.getItem('pendingOrder');
+            const el = document.getElementById('orderStatus');
+
+            if (orderData) {
+                const order = JSON.parse(orderData);
+                el.className = 'success';
+                el.innerHTML = `✅ Order found:<br><pre>${JSON.stringify(order, null, 2)}</pre>`;
+                log('✅ Pending order found');
+                return order;
+            } else {
+                el.className = 'error';
+                el.innerHTML = '❌ NO ORDER DATA! <a href="order.html">Create order here</a>';
+                log('❌ No pending order in session');
+                return null;
+            }
+        }
+
+        // Step 3: Test API
+        async function testAPI() {
+            const el = document.getElementById('apiStatus');
+            el.textContent = 'Testing...';
+            log('🧪 Testing API connection...');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/stats');
+                const stats = await response.json();
+
+                el.className = 'success';
+                el.innerHTML = `✅ API Working!<br>Total orders in DB: ${stats.totalOrders}`;
+                log('✅ API connection successful');
+                log(`📊 Stats: ${stats.totalOrders} orders, ${stats.totalUsers} users`);
+            } catch (error) {
+                el.className = 'error';
+                el.textContent = '❌ API Error: ' + error.message;
+                log('❌ API error: ' + error.message);
+            }
+        }
+
+        // Step 4: Complete order
+        async function completeOrder() {
+            const el = document.getElementById('completeStatus');
+            el.textContent = 'Processing...';
+            log('\n🚀 Starting order completion...');
+
+            try {
+                // Check login
+                const user = checkLogin();
+                if (!user) {
+                    el.className = 'error';
+                    el.textContent = '❌ Please login first!';
+                    return;
+                }
+
+                // Check order data
+                const orderData = checkOrderData();
+                if (!orderData) {
+                    el.className = 'error';
+                    el.textContent = '❌ Please create an order first!';
+                    return;
+                }
+
+                // Create order object
+                const order = {
+                    orderId: 'ORD_' + Date.now(),
+                    profileId: user.id,
+                    username: orderData.username,
+                    email: orderData.email,
+                    whatsapp: orderData.whatsapp || '',
+                    packageName: orderData.packageName,
+                    followers: orderData.followers,
+                    amount: orderData.amount,
+                    status: 'pending_verification'
+                };
+
+                log('📦 Order object created: ' + order.orderId);
+                log('User: ' + orderData.username);
+                log('Package: ' + orderData.packageName);
+                log('Amount: ₹' + orderData.amount);
+
+                // Save to API
+                log('📤 Sending to API...');
+                const result = await window.api.createOrder(order);
+
+                log('✅ API Response: ' + JSON.stringify(result));
+
+                // Verify it saved
+                log('🔍 Verifying order in database...');
+                const allOrders = await fetch('http://localhost:3000/api/orders').then(r => r.json());
+                const savedOrder = allOrders.find(o => o.orderId === order.orderId);
+
+                if (savedOrder) {
+                    el.className = 'success';
+                    el.innerHTML = `✅ SUCCESS! Order ${order.orderId} saved to database!<br><br>Check admin panel now!`;
+                    log('✅ ORDER CONFIRMED IN DATABASE!');
+                    log('Order details: ' + JSON.stringify(savedOrder, null, 2));
+
+                    await window.modal.success(
+                        `Order ${order.orderId} saved successfully! Check admin panel.`,
+                        'Success! 🎉'
+                    );
+
+                    // Clear pending order
+                    sessionStorage.removeItem('pendingOrder');
+                } else {
+                    el.className = 'error';
+                    el.textContent = '❌ Order not found in database after save!';
+                    log('❌ Order not in database!');
+                }
+
+            } catch (error) {
+                el.className = 'error';
+                el.textContent = '❌ Error: ' + error.message;
+                log('❌ ERROR: ' + error.message);
+                log('Stack: ' + error.stack);
+            }
+        }
+
+        // Auto-check on load
+        window.onload = () => {
+            log('🔍 Auto-checking status...');
+            checkLogin();
+            checkOrderData();
+        };
+    </script>
+</body>
+
+</html>

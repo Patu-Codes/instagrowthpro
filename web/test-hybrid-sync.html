@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Hybrid Sync</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .status {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #8B5CF6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .good {
+            color: #10B981;
+        }
+
+        .bad {
+            color: #EF4444;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔧 Hybrid Sync Status Check</h1>
+
+    <div class="status">
+        <h2>System Status</h2>
+        <pre id="status"></pre>
+    </div>
+
+    <div class="status">
+        <h2>Console Log</h2>
+        <button onclick="checkStatus()">Refresh Status</button>
+        <pre id="log"></pre>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Hybrid System -->
+    <script src="firebase-config.js"></script>
+    <script src="hybrid-sync.js"></script>
+
+    <script>
+        function checkStatus() {
+            const status = document.getElementById('status');
+            const log = document.getElementById('log');
+
+            let output = '';
+
+            // Check Firebase
+            if (typeof firebase !== 'undefined') {
+                output += '✅ Firebase loaded\n';
+            } else {
+                output += '❌ Firebase NOT loaded\n';
+            }
+
+            // Check firebaseDB
+            if (window.firebaseDB) {
+                output += '✅ Firebase DB initialized\n';
+            } else {
+                output += '❌ Firebase DB NOT initialized\n';
+            }
+
+            // Check firebaseAvailable
+            if (window.firebaseAvailable) {
+                output += '✅ Firebase available: ' + window.firebaseAvailable + '\n';
+            } else {
+                output += '❌ Firebase NOT available\n';
+            }
+
+            // Check hybridSync
+            if (window.hybridSync) {
+                output += '✅ Hybrid Sync loaded\n';
+
+                // Check methods
+                if (typeof window.hybridSync.saveProfile === 'function') {
+                    output += '✅ saveProfile method exists\n';
+                } else {
+                    output += '❌ saveProfile method missing\n';
+                }
+
+                if (typeof window.hybridSync.loadFromCloud === 'function') {
+                    output += '✅ loadFromCloud method exists\n';
+                } else {
+                    output += '❌ loadFromCloud method missing\n';
+                }
+            } else {
+                output += '❌ Hybrid Sync NOT loaded\n';
+            }
+
+            // Check profiles
+            const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+            output += '\n📊 Current profiles: ' + profiles.length + '\n';
+
+            if (profiles.length > 0) {
+                output += '\nProfiles:\n';
+                profiles.forEach((p, i) => {
+                    output += `  ${i + 1}. ${p.username} (${p.orders ? p.orders.length : 0} orders)\n`;
+                });
+            }
+
+            status.textContent = output;
+
+            // Show console log
+            log.textContent = 'Check browser console (F12) for detailed logs';
+        }
+
+        // Auto-check on load
+        setTimeout(checkStatus, 1000);
+
+        console.log('🔍 Testing hybrid sync status...');
+        console.log('Firebase available?', window.firebaseAvailable);
+        console.log('Firebase DB?', window.firebaseDB);
+        console.log('Hybrid Sync?', window.hybridSync);
+    </script>
+</body>
+
+</html>

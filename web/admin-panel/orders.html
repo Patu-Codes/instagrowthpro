@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Management - Admin Panel</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">InstaGrowth Admin</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="orders.html" class="nav-item active">
+                    <span class="nav-icon">📦</span>
+                    <span>All Orders</span>
+                </a>
+                <a href="users.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>Users</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="topbar">
+                <div class="page-title">
+                    <h1>Orders Management</h1>
+                    <p>Manage and track all customer orders</p>
+                </div>
+                <div class="admin-info">
+                    <div class="admin-avatar">👨‍💼</div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <!-- Filters and Search -->
+            <div class="table-card" style="margin-bottom: 1.5rem;">
+                <div class="table-header">
+                    <div class="table-actions"
+                        style="width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                        <input type="text" id="searchBox" class="search-box"
+                            placeholder="🔍 Search by username or order ID..." oninput="filterOrders()">
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="filter-btn active" onclick="setFilter('all')">All</button>
+                            <button class="filter-btn" onclick="setFilter('pending_verification')">Pending</button>
+                            <button class="filter-btn" onclick="setFilter('processing')">Processing</button>
+                            <button class="filter-btn" onclick="setFilter('completed')">Completed</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">All Orders (<span id="orderCount">0</span>)</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Profile User</th>
+                            <th>Instagram</th>
+                            <th>Package</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 3rem;">
+                                Loading orders...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Order Details</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="orderModalBody">
+                <!-- Order details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="orders.js"></script>
+</body>
+
+</html>

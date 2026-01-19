@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Payment - InstaGrowth Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .complete-payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        .complete-card {
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .complete-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .complete-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .complete-message {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            lineheight: 1.6;
+        }
+
+        .btn-complete {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-complete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .order-info {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .order-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .order-label {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .order-value {
+            color: white;
+            font-weight: 600;
+        }
+
+        .loading {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="complete-payment-page">
+        <div class="complete-card">
+            <div class="complete-icon">💳</div>
+            <h1 class="complete-title">Complete Your Payment</h1>
+            <p class="complete-message">
+                Review your order details below and click the button to confirm your payment.
+            </p>
+
+            <div class="order-info" id="orderInfo">
+                <div class="order-row">
+                    <span class="order-label">Loading order details...</span>
+                    <span class="order-value"></span>
+                </div>
+            </div>
+
+            <button class="btn-complete" id="completeBtn" onclick="completePayment()">
+                <span id="btnText">✅ I've Completed Payment</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal System -->
+    <script src="modal-system.js"></script>
+
+    <!-- API Client -->
+    <script src="api-client.js?v=20260117172115"></script>
+
+    <script>
+        // Load order data
+        const orderData = JSON.parse(sessionStorage.getItem('pendingOrder'));
+
+        if (!orderData) {
+            window.modal.error('No order found. Please start a new order.', 'Error').then(() => {
+                window.location.href = 'order.html';
+            });
+        } else {
+            // Display order info
+            document.getElementById('orderInfo').innerHTML = `
+                <div class="order-row">
+                    <span class="order-label">Instagram:</span>
+                    <span class="order-value">@${orderData.username}</span>
+                </div>
+                <div class="order-row">
+                    <span class="order-label">Package:</span>
+                    <span class="order-value">${orderData.packageName}</span>
+                </div>
+                <div class="order-row">
+                    <span class="order-label">Followers:</span>
+                    <span class="order-value">${orderData.followers}</span>
+                </div>
+                <div class="order-row">
+                    <span class="order-label">Amount:</span>
+                    <span class="order-value">₹${orderData.amount}</span>
+                </div>
+            `;
+        }
+
+        async function completePayment() {
+            const btn = document.getElementById('completeBtn');
+            const btnText = document.getElementById('btnText');
+
+            // Disable button
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="loading">⏳</span> Saving...';
+
+            try {
+                // Get current user
+                const currentUser = window.api.getCurrentUser();
+
+                if (!currentUser) {
+                    await window.modal.error('Please login to complete your order.', 'Not Logged In');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Create order
+                const order = {
+                    orderId: 'ORD_' + Date.now(),
+                    profileId: currentUser.id,
+                    profileUsername: currentUser.username,
+                    username: orderData.username,
+                    profileLink: orderData.profileLink,
+                    whatsapp: orderData.whatsapp || '',
+                    packageName: orderData.packageName,
+                    followers: orderData.followers,
+                    amount: orderData.amount,
+                    status: 'pending_verification',
+                    createdAt: new Date().toISOString()
+                };
+
+                console.log('📤 Saving order:', order.orderId);
+                console.log('🔗 Order object profileLink:', order.profileLink);
+                console.log('📦 Full order object:', JSON.stringify(order, null, 2));
+
+                // Save to database via API
+                await window.api.createOrder(order);
+
+                console.log('✅ Order saved!');
+
+                // Store for confirmation page
+                sessionStorage.setItem('confirmedOrder', JSON.stringify(order));
+                sessionStorage.removeItem('pendingOrder');
+
+                // Show success
+                await window.modal.success(
+                    `Your order #${order.orderId} has been placed successfully! We'll verify your payment and start processing soon.`,
+                    'Order Placed! 🎉'
+                );
+
+                // Redirect
+                window.location.href = 'confirmation.html';
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                btn.disabled = false;
+                btnText.textContent = '✅ I\'ve Completed Payment';
+
+                await window.modal.error(
+                    'Failed to save your order. Please try again or contact support.',
+                    'Error'
+                );
+            }
+        }
+    </script>
+</body>
+
+</html>

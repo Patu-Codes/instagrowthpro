@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Test - Simple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background: #1a1a2e;
+            color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        button {
+            background: #8B5CF6;
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+
+        button:hover {
+            background: #7C3AED;
+        }
+
+        pre {
+            background: #0a0a0f;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .user-item {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid #8B5CF6;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .user-item:hover {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .messages {
+            background: #0a0a0f;
+            padding: 1rem;
+            border-radius: 8px;
+            min-height: 200px;
+        }
+
+        .message {
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border-left: 3px solid #8B5CF6;
+            padding-left: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>💬 Live Chat Test</h1>
+
+        <button onclick="testAPI()">🔍 Test API Connection</button>
+        <button onclick="loadChats()">📥 Load All Chats</button>
+        <button onclick="insertTest()">➕ Insert Test Message</button>
+
+        <h2>Results:</h2>
+        <pre id="output">Click a button above...</pre>
+
+        <h2>Active Chats:</h2>
+        <div id="chatList"></div>
+
+        <h2>Messages:</h2>
+        <div id="messages" class="messages">Select a chat to see messages...</div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/chat/active-chats');
+                const data = await response.json();
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                output.textContent = 'ERROR: ' + error.message;
+            }
+        }
+
+        async function loadChats() {
+            const output = document.getElementById('output');
+            const chatList = document.getElementById('chatList');
+            output.textContent = 'Loading chats...';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/chat/active-chats');
+                const chats = await response.json();
+
+                output.textContent = `Found ${chats.length} chat(s)`;
+
+                chatList.innerHTML = chats.map(chat => `
+                    <div class="user-item" onclick="loadMessages('${chat.userId}', '${chat.username}')">
+                        <strong>${chat.username}</strong> 
+                        (${chat.messageCount} messages, ${chat.unreadCount} unread)
+                    </div>
+                `).join('') || '<p>No chats found</p>';
+
+            } catch (error) {
+                output.textContent = 'ERROR: ' + error.message;
+            }
+        }
+
+        async function loadMessages(userId, username) {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = '<p>Loading messages...</p>';
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/chat/${userId}`);
+                const messages = await response.json();
+
+                messagesDiv.innerHTML = `
+                    <h3>Chat with ${username}</h3>
+                    ${messages.map(msg => `
+                        <div class="message">
+                            <strong>${msg.sender === 'user' ? username : 'Admin'}:</strong> ${msg.message}
+                            <br><small>${new Date(msg.createdAt).toLocaleString()}</small>
+                        </div>
+                    `).join('') || '<p>No messages</p>'}
+                `;
+            } catch (error) {
+                messagesDiv.innerHTML = '<p>ERROR: ' + error.message + '</p>';
+            }
+        }
+
+        async function insertTest() {
+            const output = document.getElementById('output');
+            output.textContent = 'Inserting test message...';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/chat/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 'user_demo123',
+                        username: 'DemoUser',
+                        message: 'This is a test message from the test page!',
+                        sender: 'user'
+                    })
+                });
+
+                const data = await response.json();
+                output.textContent = 'Success!\n' + JSON.stringify(data, null, 2);
+
+                setTimeout(loadChats, 500);
+            } catch (error) {
+                output.textContent = 'ERROR: ' + error.message;
+            }
+        }
+
+        // Auto-load on page load
+        window.addEventListener('DOMContentLoaded', loadChats);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Database Inspector</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #0a0a0f;
+            color: white;
+        }
+
+        .section {
+            background: #1a1a2e;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #8B5CF6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 400px;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            color: #10B981;
+        }
+
+        .error {
+            color: #EF4444;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Database Inspector</h1>
+
+    <div class="section">
+        <h2>Check Profiles in Database</h2>
+        <button onclick="checkProfiles()">Check Profiles</button>
+        <pre id="profilesOutput">Click button to check...</pre>
+    </div>
+
+    <div class="section">
+        <h2>Check Orders in Database</h2>
+        <button onclick="checkOrders()">Check Orders</button>
+        <pre id="ordersOutput">Click button to check...</pre>
+    </div>
+
+    <div class="section">
+        <h2>Create Test Profile</h2>
+        <button onclick="createTestProfile()">Create Test Profile</button>
+        <pre id="testOutput">Click button to test...</pre>
+    </div>
+
+    <script>
+        async function checkProfiles() {
+            const output = document.getElementById('profilesOutput');
+            output.textContent = 'Loading profiles from API...\n\n';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/profiles');
+                const profiles = await response.json();
+
+                output.className = 'success';
+                output.textContent = `Found ${profiles.length} profile(s):\n\n`;
+
+                if (profiles.length > 0) {
+                    profiles.forEach((p, i) => {
+                        output.textContent += `${i + 1}. ${p.username}\n`;
+                        output.textContent += `   ID: ${p.id}\n`;
+                        output.textContent += `   Created: ${p.createdAt}\n`;
+                        output.textContent += `   Device: ${p.deviceId}\n\n`;
+                    });
+                } else {
+                    output.textContent += '⚠️ No profiles in database yet!\n';
+                }
+            } catch (error) {
+                output.className = 'error';
+                output.textContent = '❌ Error: ' + error.message;
+                output.textContent += '\n\nMake sure backend server is running on port 3000';
+            }
+        }
+
+        async function checkOrders() {
+            const output = document.getElementById('ordersOutput');
+            output.textContent = 'Loading orders from API...\n\n';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/orders');
+                const orders = await response.json();
+
+                output.className = 'success';
+                output.textContent = `Found ${orders.length} order(s):\n\n`;
+
+                if (orders.length > 0) {
+                    orders.forEach((o, i) => {
+                        output.textContent += `${i + 1}. Order #${o.orderId}\n`;
+                        output.textContent += `   User: ${o.username}\n`;
+                        output.textContent += `   Package: ${o.packageName}\n`;
+                        output.textContent += `   Amount: ₹${o.amount}\n`;
+                        output.textContent += `   Status: ${o.status}\n\n`;
+                    });
+                } else {
+                    output.textContent += '⚠️ No orders in database yet!\n';
+                }
+            } catch (error) {
+                output.className = 'error';
+                output.textContent = '❌ Error: ' + error.message;
+            }
+        }
+
+        async function createTestProfile() {
+            const output = document.getElementById('testOutput');
+            output.textContent = 'Creating test profile...\n\n';
+
+            try {
+                const testProfile = {
+                    id: 'PROFILE_' + Date.now(),
+                    username: 'testuser_' + Math.random().toString(36).substr(2, 5),
+                    password: 'test123',
+                    deviceId: 'DEVICE_TEST',
+                    createdAt: new Date().toISOString()
+                };
+
+                output.textContent += `Creating: ${testProfile.username}\n\n`;
+
+                const response = await fetch('http://localhost:3000/api/profiles', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testProfile)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    output.className = 'success';
+                    output.textContent += '✅ Profile created successfully!\n';
+                    output.textContent += `Profile ID: ${result.profileId}\n\n`;
+                    output.textContent += 'Now check admin panel - should appear there!';
+                } else {
+                    output.className = 'error';
+                    output.textContent += '❌ Failed: ' + result.error;
+                }
+            } catch (error) {
+                output.className = 'error';
+                output.textContent = '❌ Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+
+</html>

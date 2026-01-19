@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - InstaGrowth Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <img src="logo.png" alt="InstaGrowthPro Logo"
+                        style="height: 50px; width: auto; border-radius: 50%; margin-right: 10px;">
+                    <span class="logo-text">InstaGrowth<span class="pro">Pro</span></span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="order.html" class="nav-link">Order Now</a>
+                    <a href="my-orders.html" class="nav-link active">My Orders</a>
+                </div>
+                <div id="userNav"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- My Orders Section -->
+    <section class="admin-section" style="padding-top: 8rem;">
+        <div class="container">
+            <div class="admin-header">
+                <div>
+                    <h1 class="admin-title">My Orders</h1>
+                    <p class="admin-subtitle">Track your Instagram growth orders</p>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state" style="display: none; text-align: center; padding: 3rem;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">⏳</div>
+                <p>Loading your orders...</p>
+            </div>
+
+            <!-- No Orders State -->
+            <div id="noOrdersState" class="no-orders-state"
+                style="display: none; text-align: center; padding: 4rem; background: var(--glass-bg); border-radius: var(--radius-lg); border: 1px solid var(--glass-border);">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
+                <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">No Orders Yet</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">Start growing your Instagram today!</p>
+                <a href="order.html" class="btn btn-primary">Place Your First Order</a>
+            </div>
+
+            <!-- Orders Table -->
+            <div id="ordersContainer" class="table-container" style="display: none;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Package</th>
+                            <th>Instagram</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Orders will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Details Modal -->
+    <div id="orderDetailsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <button class="modal-close" onclick="closeOrderDetails()">&times;</button>
+            </div>
+            <div class="modal-body" id="orderDetailsBody">
+                <!-- Order details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="my-orders.js"></script>
+</body>
+
+</html>

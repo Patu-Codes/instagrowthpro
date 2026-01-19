@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Access - InstaGrowth Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body
+    style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);">
+    <div
+        style="text-align: center; max-width: 500px; padding: 3rem; background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 16px;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🔐</div>
+        <h1
+            style="font-size: 2rem; margin-bottom: 1rem; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Admin Panel Access</h1>
+        <p style="color: #a0a0b0; margin-bottom: 2rem;">Click below to open the admin panel with shared data access</p>
+
+        <button onclick="openAdminPanel()" class="btn btn-primary btn-large" style="width: 100%; margin-bottom: 1rem;">
+            <span>Open Admin Panel</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" />
+            </svg>
+        </button>
+
+        <p style="font-size: 0.875rem; color: #666677;">This will open admin panel in a new window with access to user
+            data</p>
+    </div>
+
+    <script>
+        function openAdminPanel() {
+            // Open admin panel in new window
+            const adminWindow = window.open(
+                '../ADMIN%20PANEL%20APP/index.html',
+                'AdminPanel',
+                'width=1400,height=900,menubar=no,toolbar=no,location=no'
+            );
+
+            if (adminWindow) {
+                console.log('✅ Admin panel opened');
+                // Parent window's localStorage is now accessible to child
+            } else {
+                alert('Please allow popups for this site to open admin panel');
+            }
+        }
+    </script>
+</body>
+
+</html>

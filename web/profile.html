@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - InstaGrowth Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="index.html" class="logo">
+                    <img src="logo.png" alt="InstaGrowthPro Logo"
+                        style="height: 50px; width: auto; border-radius: 50%; margin-right: 10px;">
+                    <span class="logo-text">InstaGrowth<span class="pro">Pro</span></span>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="order.html" class="nav-link">Order Now</a>
+                    <a href="profile.html" class="nav-link active">My Profile</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Section -->
+    <section class="admin-section" style="padding-top: 8rem;">
+        <div class="container">
+            <!-- Profile Header -->
+            <div class="profile-header"
+                style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; font-weight: 800;"
+                        id="profileAvatar">?</div>
+                    <div>
+                        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;" id="profileUsername">Loading...</h1>
+                        <p style="color: var(--text-secondary);">Device Profile • <span id="profileCreated">-</span></p>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="stat-card"
+                    style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 1.5rem;">
+                    <div style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.875rem;">Total Orders
+                    </div>
+                    <div style="font-size: 2rem; font-weight: 800;" id="totalOrders">0</div>
+                </div>
+                <div class="stat-card"
+                    style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 1.5rem;">
+                    <div style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.875rem;">Total Spent
+                    </div>
+                    <div style="font-size: 2rem; font-weight: 800; color: #10B981;" id="totalSpent">₹0</div>
+                </div>
+                <div class="stat-card"
+                    style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 1.5rem;">
+                    <div style="color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.875rem;">Followers
+                        Gained</div>
+                    <div style="font-size: 2rem; font-weight: 800; color: #8B5CF6;" id="totalFollowers">0</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="profile-tabs" style="margin-bottom: 2rem;">
+                <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--glass-border);">
+                    <button class="tab-btn active" onclick="switchTab('orders')" id="ordersTab">My Orders</button>
+                    <button class="tab-btn" onclick="switchTab('settings')" id="settingsTab">Settings</button>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="ordersContent" class="tab-content">
+                <div id="noOrders"
+                    style="text-align: center; padding: 4rem; background: var(--glass-bg); border-radius: var(--radius-lg); border: 1px solid var(--glass-border);">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
+                    <h2 style="margin-bottom: 0.5rem;">No Orders Yet</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">Start growing your Instagram today!
+                    </p>
+                    <a href="order.html" class="btn btn-primary">Place Your First Order</a>
+                </div>
+
+                <div id="ordersTable" class="table-container" style="display: none;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Package</th>
+                                <th>Instagram</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Orders will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settingsContent" class="tab-content" style="display: none;">
+                <div
+                    style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 2rem; max-width: 600px;">
+                    <h2 style="margin-bottom: 2rem;">Account Settings</h2>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Username</label>
+                        <input type="text" id="settingsUsername" class="form-input" disabled
+                            style="width: 100%; padding: 0.875rem; background: var(--bg-secondary); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: var(--text-primary);">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">New Password</label>
+                        <input type="password" id="newPassword" placeholder="Leave blank to keep current"
+                            class="form-input"
+                            style="width: 100%; padding: 0.875rem; background: var(--bg-secondary); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: var(--text-primary);">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Confirm New
+                            Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm new password"
+                            class="form-input"
+                            style="width: 100%; padding: 0.875rem; background: var(--bg-secondary); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: var(--text-primary);">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="updatePassword()">Update Password</button>
+
+                    <hr style="margin: 2rem 0; border: none; border-top: 1px solid var(--glass-border);">
+
+                    <h3 style="margin-bottom: 1rem; color: #EF4444;">Danger Zone</h3>
+                    <button class="btn btn-secondary" onclick="deleteAccount()"
+                        style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #EF4444;">Delete
+                        Account</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: white;
+            border-bottom-color: #8B5CF6;
+        }
+
+        .tab-btn:hover {
+            color: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+    </style>
+
+    <!-- API Client -->
+    <script src="api-client.js?v=cookies"></script>
+
+    <!-- Profile Scripts -->
+    <script src="order-invoice-modal.js?v=3"></script>
+    <script src="profile-page.js?v=3"></script>
+</body>
+
+</html>

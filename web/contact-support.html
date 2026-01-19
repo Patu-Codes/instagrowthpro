@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact and Support - InstaGrowth Pro</title>
+    <meta name="description" content="Get in touch with InstaGrowth Pro support team for assistance with your orders.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        .contact-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            padding: 2rem 0;
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 2rem;
+        }
+
+        .contact-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        .contact-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .contact-card h3 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .contact-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .faq-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 3rem;
+        }
+
+        .faq-section h2 {
+            color: #fff;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .faq-item {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .faq-question {
+            color: #EC4899;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .faq-answer {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #8B5CF6;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #EC4899;
+            transform: translateX(-5px);
+        }
+
+        .support-hours {
+            text-align: center;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .support-hours h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .support-hours p {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .contact-header h1 {
+                font-size: 2rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .faq-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contact-page">
+        <div class="contact-container">
+            <a href="index.html" class="back-link">
+                ← Back to Home
+            </a>
+
+            <div class="contact-header">
+                <h1>Contact and Support</h1>
+                <p>We're here to help! Reach out to us through any of these channels.</p>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>WhatsApp Support</h3>
+                    <p>Get instant support via WhatsApp. We usually respond within minutes.</p>
+                    <a href="https://wa.me/919372645587" target="_blank" class="contact-link">
+                        Chat on WhatsApp
+                    </a>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">📧</div>
+                    <h3>Email Support</h3>
+                    <p>Send us an email for detailed inquiries or partnership opportunities.</p>
+                    <button class="contact-link" onclick="openContactForm()" style="border: none; cursor: pointer;">
+                        Contact Support
+                    </button>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">💬</div>
+                    <h3>Live Chat</h3>
+                    <p>Chat with our support team in real-time for immediate assistance.</p>
+                    <button class="contact-link" onclick="openLiveChat()" style="border: none; cursor: pointer;">
+                        Start Chat
+                    </button>
+                </div>
+            </div>
+
+            <div class="faq-section">
+                <h2>Frequently Asked Questions</h2>
+
+                <div class="faq-item">
+                    <div class="faq-question">📦 How long does delivery take?</div>
+                    <div class="faq-answer">Orders are typically delivered within 5 minutes to 1 hour maximum. Most
+                        orders complete in under 30 minutes!</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">🔒 Is my Instagram account safe?</div>
+                    <div class="faq-answer">Absolutely! We NEVER ask for your Instagram password. All we need is your
+                        public Instagram username to deliver followers.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">💳 What payment methods do you accept?</div>
+                    <div class="faq-answer">We accept UPI payments (GPay, PhonePe, Paytm, etc.). Simply scan the QR code
+                        or pay to the UPI ID provided.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">📊 Can I track my order?</div>
+                    <div class="faq-answer">Yes! After payment, visit your Profile page to see your order status and
+                        track delivery in real-time.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">🔄 What's your refund policy?</div>
+                    <div class="faq-answer">Refunds are available only if the service hasn't started. Once delivery
+                        begins, the order cannot be refunded. See our Terms of Service for details.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">📱 Do I need to make my account public?</div>
+                    <div class="faq-answer">Yes! Your Instagram account must be public during delivery. You can make it
+                        private again once the order is complete.</div>
+                </div>
+            </div>
+
+            <div class="support-hours">
+                <h3>⏰ Support Hours</h3>
+                <p><strong>WhatsApp Support:</strong> Available 24/7</p>
+                <p><strong>Response Time:</strong> Usually within 5-15 minutes</p>
+                <p><strong>Emergency Support:</strong> Contact us on WhatsApp anytime</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <link rel="stylesheet" href="chat-widget.css">
+    <script src="api-client.js?v=cookies"></script>
+    <script src="chat-widget.js"></script>
+    <script src="contact-form.js"></script>
+
+    <script>
+        function openLiveChat() {
+            if (window.chatWidget) {
+                window.chatWidget.toggleChat();
+            } else {
+                alert('Please wait, chat is loading...');
+            }
+        }
+    </script>
+</body>
+
+</html>

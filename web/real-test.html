@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Test - Real Site</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <span class="logo-text">InstaGrowth<span class="pro">Pro</span></span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link active">Home</a>
+                    <a href="#pricing" class="nav-link">Pricing</a>
+                    <a href="order.html" class="nav-link">Order Now</a>
+                </div>
+                <!-- TEST: Only ONE userNavigation div -->
+                <div id="userNavigation" style="border: 3px solid lime; background: rgba(0,255,0,0.1);"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div style="padding: 40px; background: white; color: black;">
+        <h1>🧪 Navigation Test with Real CSS</h1>
+        <p>Open this in Edge and check if username appears twice.</p>
+        <p>The userNavigation div has a LIME border so you can see it clearly.</p>
+        <button onclick="checkDuplicates()"
+            style="padding: 10px 20px; background: #8B5CF6; color: white; border: none; cursor: pointer;">
+            Check for Duplicates
+        </button>
+        <pre id="result" style="background: #f0f0f0; padding: 20px; margin-top: 20px;"></pre>
+    </div>
+
+    <script>
+        localStorage.setItem('currentUser', JSON.stringify({
+            username: 'prathamesh0045k@gmail.com',
+            id: 'test123'
+        }));
+
+        function checkDuplicates() {
+            const container = document.getElementById('userNavigation');
+            const result = document.getElementById('result');
+
+            result.textContent = `
+Number of <a> tags: ${container.querySelectorAll('a').length}
+Number of <button> tags: ${container.querySelectorAll('button').length}
+Total children: ${container.children.length}
+
+Child elements:
+${Array.from(container.children).map((child, i) =>
+                `[${i}] ${child.tagName}: "${child.textContent.trim()}"`
+            ).join('\n')}
+
+If you see TWO usernames visually but this shows only 1 <a> tag,
+then it's a CSS issue (::before/::after or text duplication).
+            `;
+        }
+    </script>
+
+    <script src="user-navigation.js?v=5"></script>
+
+    <script>
+        setTimeout(checkDuplicates, 1500);
+    </script>
+</body>
+
+</html>

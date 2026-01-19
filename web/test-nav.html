@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Navigation</title>
+</head>
+
+<body>
+    <h1>Testing User Navigation</h1>
+
+    <div id="userNavigation" style="padding: 20px; background: #1a1a2e; color: white;"></div>
+
+    <script>
+        // Simulate localStorage
+        localStorage.setItem('currentUser', JSON.stringify({
+            username: 'prathamesh0045k@gmail.com',
+            id: 'test123'
+        }));
+    </script>
+
+    <script src="user-navigation.js?v=3"></script>
+
+    <div style="margin-top: 20px; padding: 20px; background: #0a0a0f; color: white;">
+        <h2>Debug Info:</h2>
+        <p>Open browser console (F12) and check logs</p>
+        <p>Expected: Only ONE username should appear above</p>
+    </div>
+</body>
+
+</html>
