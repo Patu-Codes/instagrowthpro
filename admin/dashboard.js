@@ -1,11 +1,8 @@
 // Admin Dashboard JavaScript - Uses API
 console.log('📊 Admin Dashboard Loading...');
 
-// Dashboard JavaScript
-// Load stats and recent orders
-
-// Use API base from api-config.js (loaded in HTML)
-const API_BASE = window.API_BASE_URL || window.location.origin;
+// Production API Base
+const API_BASE = 'https://instagrowthpro-backend.onrender.com';
 
 // Auth check
 function checkAuth() {

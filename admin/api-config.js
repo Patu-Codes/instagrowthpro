@@ -1,9 +1,9 @@
 // Admin API Configuration
 // This file centralizes all admin API endpoint configurations
-// Uses window.location.origin to automatically work in both local and production
+// Points to production Render backend
 
-// Dynamic API Base - works in local dev and production
-const API_BASE_URL = window.location.origin;
+// Production API Base
+const API_BASE_URL = 'https://instagrowthpro-backend.onrender.com';
 
 const ADMIN_API_ENDPOINTS = {
     baseURL: `${API_BASE_URL}/api`,
