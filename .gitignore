@@ -64,9 +64,13 @@ env/
 # Vercel
 .vercel
 
-# Secrets
+# Ignore secrets only (not package.json)
 backend/firebase-service-account.json
-backend/*.json
+backend/*service-account*.json
+
+# Allow backend package files
+!backend/package.json
+!backend/package-lock.json
 
 # Env
 .env
