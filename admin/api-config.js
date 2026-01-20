@@ -1,10 +1,9 @@
 // Admin API Configuration
 // This file centralizes all admin API endpoint configurations
-// Use environment variables for production deployment
+// Uses window.location.origin to automatically work in both local and production
 
-const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-    ? 'https://your-backend-url.com'  // 👈 REPLACE with your production backend URL
-    : 'http://localhost:3000';
+// Dynamic API Base - works in local dev and production
+const API_BASE_URL = window.location.origin;
 
 const ADMIN_API_ENDPOINTS = {
     baseURL: `${API_BASE_URL}/api`,
@@ -37,4 +36,4 @@ if (typeof module !== 'undefined' && module.exports) {
 window.ADMIN_API_ENDPOINTS = ADMIN_API_ENDPOINTS;
 window.API_BASE_URL = API_BASE_URL;
 
-console.log('🔧 Admin API Config loaded:', API_BASE_URL);
+console.log('🔧 Admin API Config loaded for:', API_BASE_URL);

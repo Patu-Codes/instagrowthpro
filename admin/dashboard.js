@@ -1,30 +1,39 @@
 // Admin Dashboard JavaScript - Uses API
 console.log('📊 Admin Dashboard Loading...');
 
-// Check authentication
-if (!sessionStorage.getItem('adminLoggedIn')) {
-    window.location.href = 'index.html';
+// Dashboard JavaScript
+// Load stats and recent orders
+
+// Use API base from api-config.js (loaded in HTML)
+const API_BASE = window.API_BASE_URL || window.location.origin;
+
+// Auth check
+function checkAuth() {
+    const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
+    if (!isAuthenticated) {
+        window.location.href = 'index.html';
+    }
 }
 
 // Listen for messages from orders page to refresh stats
 window.addEventListener('message', (event) => {
     if (event.data.action === 'refreshStats') {
         console.log('📊 Refreshing stats after order deletion...');
-        loadDashboard();
+        loadStats();
     }
 });
 
-// Load dashboard data
-async function loadDashboard() {
+// Load Dashboard Stats
+async function loadStats() {
     try {
         console.log('📥 Loading dashboard data from API...');
 
         // Get stats from API
-        const statsResponse = await fetch('http://localhost:3000/api/stats');
+        const statsResponse = await fetch(`${API_BASE}/api/stats`);
         const stats = await statsResponse.json();
 
         // Get all orders to calculate additional stats
-        const ordersResponse = await fetch('http://localhost:3000/api/orders');
+        const ordersResponse = await fetch(`${API_BASE}/api/orders`);
         const allOrders = await ordersResponse.json();
 
         console.log(`📊 Stats loaded: ${stats.totalUsers} users, ${stats.totalOrders} orders`);

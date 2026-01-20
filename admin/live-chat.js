@@ -10,7 +10,7 @@ let pollInterval = null;
 async function loadActiveChats() {
     try {
         console.log('🔄 Loading active chats...');
-        const response = await fetch('http://localhost:3000/api/chat/active-chats');
+        const response = await fetch(`${API_BASE || window.location.origin}/api/chat/active-chats');
         activeChats = await response.json();
         console.log('📥 Received chats:', activeChats);
         renderChatList();
@@ -79,7 +79,7 @@ async function selectChat(userId, username) {
     selectedUsername = username;
 
     // Mark as read
-    await fetch('http://localhost:3000/api/chat/mark-read', {
+    await fetch(`${API_BASE || window.location.origin}/api/chat/mark-read', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })
@@ -101,7 +101,7 @@ async function loadMessages() {
     if (!selectedUserId) return;
 
     try {
-        const response = await fetch(`http://localhost:3000/api/chat/${selectedUserId}`);
+        const response = await fetch(`${API_BASE || window.location.origin}/api/chat/${selectedUserId}`);
         messages = await response.json();
         renderChatWindow();
     } catch (error) {
@@ -177,7 +177,7 @@ async function sendMessage() {
     if (!message || !selectedUserId) return;
 
     try {
-        await fetch('http://localhost:3000/api/chat/send', {
+        await fetch(`${API_BASE || window.location.origin}/api/chat/send', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
