@@ -12,7 +12,7 @@ let pollInterval = null;
 async function loadActiveChats() {
     try {
         console.log('🔄 Loading active chats...');
-        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/chat/active-chats');
+        const response = await fetch(`${API_BASE}/api/chat/active-chats`);
         activeChats = await response.json();
         console.log('📥 Received chats:', activeChats);
         renderChatList();
@@ -81,9 +81,9 @@ async function selectChat(userId, username) {
     selectedUsername = username;
 
     // Mark as read
-    await fetch(`${ API_BASE || 'window.location.origin' } /api/chat / mark - read', {
+    await fetch(`${API_BASE}/api/chat/mark-read`, {
         method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })
     });
 
@@ -103,7 +103,7 @@ async function loadMessages() {
     if (!selectedUserId) return;
 
     try {
-        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/chat/${selectedUserId}`);
+        const response = await fetch(`${API_BASE}/api/chat/${selectedUserId}`);
         messages = await response.json();
         renderChatWindow();
     } catch (error) {
@@ -179,7 +179,7 @@ async function sendMessage() {
     if (!message || !selectedUserId) return;
 
     try {
-        await fetch(`${API_BASE || 'window.location.origin'}/api/chat/send', {
+        await fetch(`${API_BASE}/api/chat/send`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -218,7 +218,7 @@ function formatTime(dateString) {
     const diffMinutes = Math.floor((now - date) / 60000);
 
     if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 60) return `${ diffMinutes }m ago`;
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
     if (diffMinutes < 1440) return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
