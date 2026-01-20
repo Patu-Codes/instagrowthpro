@@ -23,27 +23,65 @@ window.addEventListener('message', (event) => {
 // Load Dashboard Stats
 async function loadDashboard() {
     try {
-        console.log('📥 Loading dashboard data from real APIs...');
+        console.log('📥 Loading dashboard data from APIs...');
+        console.log('🌐 API Base:', API_BASE);
 
-        // Fetch orders from the same endpoint used by orders page
+        // Fetch orders - EXACT same pattern as orders.js
+        console.log('🔄 Fetching orders from:', `${API_BASE}/api/orders`);
         const ordersResponse = await fetch(`${API_BASE}/api/orders`);
+
+        if (!ordersResponse.ok) {
+            throw new Error(`Orders API failed: ${ordersResponse.status} ${ordersResponse.statusText}`);
+        }
+
         const allOrders = await ordersResponse.json();
+        console.log('📦 Orders API Response:', allOrders);
+        console.log('📦 Orders type:', typeof allOrders, 'Is array:', Array.isArray(allOrders));
+        console.log('📦 Orders count:', Array.isArray(allOrders) ? allOrders.length : 'NOT AN ARRAY');
 
-        // Fetch users from the same endpoint used by users page
-        const usersResponse = await fetch(`${API_BASE}/api/profiles`);
-        const allUsers = await usersResponse.json();
+        // Fetch users - EXACT same pattern as users.html  
+        console.log('🔄 Fetching profiles from:', `${API_BASE}/api/profiles`);
+        const profilesResponse = await fetch(`${API_BASE}/api/profiles`);
 
-        console.log(`📦 Loaded ${allOrders.length} orders, ${allUsers.length} users`);
+        if (!profilesResponse.ok) {
+            throw new Error(`Profiles API failed: ${profilesResponse.status} ${profilesResponse.statusText}`);
+        }
 
-        // Calculate stats from real data
+        const allProfiles = await profilesResponse.json();
+        console.log('👥 Profiles API Response:', allProfiles);
+        console.log('👥 Profiles type:', typeof allProfiles, 'Is array:', Array.isArray(allProfiles));
+        console.log('👥 Profiles count:', Array.isArray(allProfiles) ? allProfiles.length : 'NOT AN ARRAY');
+
+        // Ensure we have arrays
+        if (!Array.isArray(allOrders)) {
+            console.error('❌ Orders response is not an array!', allOrders);
+            throw new Error('Invalid orders response format');
+        }
+
+        if (!Array.isArray(allProfiles)) {
+            console.error('❌ Profiles response is not an array!', allProfiles);
+            throw new Error('Invalid profiles response format');
+        }
+
+        console.log(`✅ Successfully loaded ${allOrders.length} orders and ${allProfiles.length} profiles`);
+
+        // Calculate stats from real data - same logic as orders.js filters
         const today = new Date().toDateString();
-        const todayOrders = allOrders.filter(o => new Date(o.createdAt).toDateString() === today);
+
+        const todayOrders = allOrders.filter(o => {
+            return o.createdAt && new Date(o.createdAt).toDateString() === today;
+        });
+
         const pendingOrders = allOrders.filter(o => o.status === 'pending_verification');
         const completedOrders = allOrders.filter(o => o.status === 'completed');
         const processingOrders = allOrders.filter(o => o.status === 'processing');
 
-        // Calculate revenue
-        const totalRevenue = allOrders.reduce((sum, order) => sum + (parseFloat(order.amount) || 0), 0);
+        // Calculate revenue - handle missing/invalid amounts
+        const totalRevenue = allOrders.reduce((sum, order) => {
+            const amount = parseFloat(order.amount);
+            return sum + (isNaN(amount) ? 0 : amount);
+        }, 0);
+
         const avgOrderValue = allOrders.length > 0 ? Math.round(totalRevenue / allOrders.length) : 0;
 
         // Build stats object
@@ -52,26 +90,31 @@ async function loadDashboard() {
             todayOrders: todayOrders.length,
             pendingOrders: pendingOrders.length,
             totalRevenue: totalRevenue,
-            totalUsers: allUsers.length,
+            totalUsers: allProfiles.length,
             completedOrders: completedOrders.length,
             processingOrders: processingOrders.length,
             avgOrderValue: avgOrderValue
         };
 
+        console.log('📊 Calculated stats:', stats);
+
         // Display stats
         displayStats(stats);
 
-        // Display recent orders
+        // Display recent orders (same as orders.js displays them)
         displayRecentOrders(allOrders);
 
     } catch (error) {
         console.error('❌ Error loading dashboard:', error);
-        showDashboardError();
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
+        showDashboardError(error.message);
     }
 }
 
-function showDashboardError() {
-    console.error('Failed to load dashboard data. Check if backend is running.');
+function showDashboardError(errorMessage) {
+    console.error('❌ Dashboard error:', errorMessage);
+
     // Set all stats to 0 as fallback
     const emptyStats = {
         totalOrders: 0,
@@ -84,6 +127,9 @@ function showDashboardError() {
         avgOrderValue: 0
     };
     displayStats(emptyStats);
+
+    // Show error in console for debugging
+    console.log('⚠️  Showing zero stats due to error. Check network tab and backend.');
 }
 
 function displayStats(stats) {
