@@ -1,3 +1,6 @@
+// Dynamic API Base
+const API_BASE = window.location.origin;
+
 // Admin Authentication
 const ADMIN_CREDENTIALS = {
     email: 'prathamesh0045k@gmail.com',

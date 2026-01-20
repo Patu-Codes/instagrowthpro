@@ -1,8 +1,8 @@
 // Admin Dashboard JavaScript - Uses API
 console.log('📊 Admin Dashboard Loading...');
 
-// Production API Base
-const API_BASE = 'https://instagrowthpro-backend.onrender.com';
+// Dynamic API Base
+const API_BASE = window.location.origin;
 
 // Auth check
 function checkAuth() {

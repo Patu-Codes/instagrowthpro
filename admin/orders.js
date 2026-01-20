@@ -14,7 +14,7 @@ async function loadOrders() {
     console.log('📥 Loading orders from API...');
 
     try {
-        const response = await fetch(`${API_BASE || 'https://instagrowthpro-backend.onrender.com'}/api/orders');
+        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/orders');
         if (!response.ok) throw new Error('Failed to load orders');
 
         allOrders = await response.json();
@@ -92,7 +92,7 @@ async function loadOrders() {
     console.log('📥 Loading orders from API...');
 
     try {
-        const response = await fetch(`${API_BASE || 'https://instagrowthpro-backend.onrender.com'}/api/orders');
+        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/orders');
         if (!response.ok) throw new Error('Failed to load orders');
 
         allOrders = await response.json();
@@ -248,7 +248,7 @@ async function updateOrderStatus(orderId, profileId) {
     try {
         console.log(`🔄 Updating order ${orderId} to ${newStatus}...`);
 
-        const response = await fetch(`${API_BASE || 'https://instagrowthpro-backend.onrender.com'}/api/orders/${orderId}/status`, {
+        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/orders/${orderId}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: newStatus })
@@ -343,7 +343,7 @@ async function deleteOrder(orderId) {
     }
 
     try {
-        const response = await fetch(`${API_BASE || 'https://instagrowthpro-backend.onrender.com'}/api/orders/${orderId}`, {
+        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/orders/${orderId}`, {
             method: 'DELETE'
         });
 

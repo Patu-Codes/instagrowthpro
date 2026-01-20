@@ -1,3 +1,6 @@
+// Dynamic API Base
+const API_BASE = window.location.origin;
+
 // Complete rebuild of displayOrders function with correct fields
 function displayOrders(orders) {
     const tbody = document.getElementById('ordersTableBody');

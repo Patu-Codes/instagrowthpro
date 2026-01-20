@@ -1,3 +1,6 @@
+// Dynamic API Base
+const API_BASE = window.location.origin;
+
 // Professional Modal System - Replaces all alert() and confirm()
 // Beautiful, animated modals that match your design
 

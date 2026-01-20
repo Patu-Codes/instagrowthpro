@@ -1,3 +1,6 @@
+// Dynamic API Base
+const API_BASE = window.location.origin;
+
 // Cloud Data Bridge - Admin panel reads from Firestore
 // Works across different ports/origins
 
