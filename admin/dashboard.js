@@ -16,12 +16,12 @@ function checkAuth() {
 window.addEventListener('message', (event) => {
     if (event.data.action === 'refreshStats') {
         console.log('📊 Refreshing stats after order deletion...');
-        loadStats();
+        loadDashboard();
     }
 });
 
 // Load Dashboard Stats
-async function loadStats() {
+async function loadDashboard() {
     try {
         console.log('📥 Loading dashboard data from API...');
 
