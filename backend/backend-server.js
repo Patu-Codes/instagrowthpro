@@ -6,6 +6,8 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 
 const app = express();
+// Serve Admin Panel (static files)
+app.use('/admin', express.static(path.join(__dirname, '../admin')));
 const PORT = process.env.PORT || 3000;
 
 // CORS Configuration - Allow Vercel domains and localhost
