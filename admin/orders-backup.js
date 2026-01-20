@@ -1,24 +1,9 @@
-// Orders Management JavaScript
-console.log('📦 Orders Management Loading...');
-
-// CRITICAL: API Base for all requests
-const API_BASE = window.location.origin;
-console.log('🌐 Orders.js API Base:', API_BASE);
-
-// Check authentication
-if (!sessionStorage.getItem('adminLoggedIn')) {
-    window.location.href = 'index.html';
-}
-
-let allOrders = [];
-let currentFilter = 'all';
-
 // Load all orders from API
 async function loadOrders() {
     console.log('📥 Loading orders from API...');
 
     try {
-        const response = await fetch(`${API_BASE}/api/orders');
+        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/orders');
         if (!response.ok) throw new Error('Failed to load orders');
 
         allOrders = await response.json();
@@ -252,7 +237,7 @@ async function updateOrderStatus(orderId, profileId) {
     try {
         console.log(`🔄 Updating order ${orderId} to ${newStatus}...`);
 
-        const response = await fetch(`${API_BASE}/api/orders/${orderId}/status`, {
+        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/orders/${orderId}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: newStatus })
@@ -347,7 +332,7 @@ async function deleteOrder(orderId) {
     }
 
     try {
-        const response = await fetch(`${API_BASE}/api/orders/${orderId}`, {
+        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/orders/${orderId}`, {
             method: 'DELETE'
         });
 
