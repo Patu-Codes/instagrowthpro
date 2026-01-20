@@ -1,14 +1,3 @@
-// Orders Management JavaScript
-console.log('📦 Orders Management Loading...');
-
-// Check authentication
-if (!sessionStorage.getItem('adminLoggedIn')) {
-    window.location.href = 'index.html';
-}
-
-let allOrders = [];
-let currentFilter = 'all';
-
 // Load all orders from API
 async function loadOrders() {
     console.log('📥 Loading orders from API...');
@@ -19,19 +8,19 @@ async function loadOrders() {
 
         allOrders = await response.json();
 
-        console.log(`📦 Loaded ${allOrders.length} orders from API`);
+        console.log(`📦 Loaded ${ allOrders.length } orders from API`);
         displayOrders(allOrders);
     } catch (error) {
         console.error('❌ Error loading orders:', error);
         document.getElementById('ordersTableBody').innerHTML = `
-            <tr>
-                <td colspan="8" style="text-align: center; padding: 3rem; color: #EF4444;">
-                    <div style="font-size: 2rem; margin-bottom: 1rem;">❌</div>
-                    <div>Failed to load orders</div>
-                    <div style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.7;">Make sure backend server is running on port 3000</div>
-                </td>
-            </tr>
-        `;
+        < tr >
+        <td colspan="8" style="text-align: center; padding: 3rem; color: #EF4444;">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">❌</div>
+            <div>Failed to load orders</div>
+            <div style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.7;">Make sure backend server is running on port 3000</div>
+        </td>
+            </tr >
+            `;
     }
 }
 
@@ -41,13 +30,13 @@ function displayOrders(orders) {
 
     if (orders.length === 0) {
         tbody.innerHTML = `
-            <tr>
-                <td colspan="9" style="text-align: center; padding: 3rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
-                    <div style="color: var(--text-secondary);">No orders found</div>
-                </td>
-            </tr>
-        `;
+            < tr >
+            <td colspan="9" style="text-align: center; padding: 3rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                <div style="color: var(--text-secondary);">No orders found</div>
+            </td>
+            </tr >
+            `;
         return;
     }
 
@@ -60,7 +49,7 @@ function displayOrders(orders) {
         const packageName = order.package || order.packageName || 'N/A';
 
         return `
-            <tr>
+            < tr >
                 <td><strong>#${order.orderId || 'N/A'}</strong></td>
                 <td><strong>@${order.profileUsername || 'Unknown User'}</strong></td>
                 <td>${order.profileLink ? `<a href="${order.profileLink}" target="_blank" style="color: #8B5CF6; text-decoration: none; font-weight: 600;">🔗 Link</a>` : '<span style="color: var(--text-secondary);">N/A</span>'}</td>
@@ -72,9 +61,9 @@ function displayOrders(orders) {
                 <td>
                     <button class="btn-action" onclick='viewOrder(${JSON.stringify(order).replace(/'/g, "&#39;")})'>View</button>
                     <button class="btn-delete" onclick="deleteOrder('${order.orderId}')" style="background: linear-gradient(135deg, #EF4444, #DC2626); margin-left: 0.5rem;">Delete</button>
-                </td>
-            </tr>
-        `;
+                </td >
+            </tr >
+            `;
     }).join('');
 }/ Orders Management JavaScript
 console.log('📦 Orders Management Loading...');
@@ -92,7 +81,7 @@ async function loadOrders() {
     console.log('📥 Loading orders from API...');
 
     try {
-        const response = await fetch(`${API_BASE || 'window.location.origin'}/api/orders');
+        const response = await fetch(`${ API_BASE || 'window.location.origin' } /api/orders');
         if (!response.ok) throw new Error('Failed to load orders');
 
         allOrders = await response.json();

@@ -1,4 +1,6 @@
 // Admin Live Chat JavaScript
+// Dynamic API Base
+const API_BASE = window.location.origin;
 
 let activeChats = [];
 let selectedUserId = null;
@@ -52,16 +54,16 @@ function renderChatList() {
 
     if (activeChats.length === 0) {
         container.innerHTML = `
-            <div class="empty-state" style="padding: 2rem;">
-                <p>No conversations yet</p>
-            </div>
-        `;
+            < div class= "empty-state" style = "padding: 2rem;" >
+            <p>No conversations yet</p>
+            </div >
+            `;
         return;
     }
 
     container.innerHTML = activeChats.map(chat => `
-        <div class="chat-user-item ${chat.userId === selectedUserId ? 'active' : ''}" 
-             onclick="selectChat('${chat.userId}', '${chat.username}')">
+            < div class="chat-user-item ${chat.userId === selectedUserId ? 'active' : ''}"
+        onclick = "selectChat('${chat.userId}', '${chat.username}')" >
             <div class="chat-user-header">
                 <span class="chat-user-name">${chat.username}</span>
                 ${chat.unreadCount > 0 ? `<span class="chat-unread-badge">${chat.unreadCount}</span>` : ''}
@@ -69,8 +71,8 @@ function renderChatList() {
             <div class="chat-last-message">
                 ${chat.messageCount} message${chat.messageCount !== 1 ? 's' : ''}
             </div>
-        </div>
-    `).join('');
+        </div >
+            `).join('');
 }
 
 // Select a chat
@@ -79,9 +81,9 @@ async function selectChat(userId, username) {
     selectedUsername = username;
 
     // Mark as read
-    await fetch(`${API_BASE || 'window.location.origin'}/api/chat/mark-read', {
+    await fetch(`${ API_BASE || 'window.location.origin' } /api/chat / mark - read', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })
     });
 
@@ -216,7 +218,7 @@ function formatTime(dateString) {
     const diffMinutes = Math.floor((now - date) / 60000);
 
     if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    if (diffMinutes < 60) return `${ diffMinutes }m ago`;
     if (diffMinutes < 1440) return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }

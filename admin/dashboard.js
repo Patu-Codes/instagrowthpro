@@ -23,30 +23,40 @@ window.addEventListener('message', (event) => {
 // Load Dashboard Stats
 async function loadDashboard() {
     try {
-        console.log('📥 Loading dashboard data from API...');
+        console.log('📥 Loading dashboard data from real APIs...');
 
-        // Get stats from API
-        const statsResponse = await fetch(`${API_BASE}/api/stats`);
-        const stats = await statsResponse.json();
-
-        // Get all orders to calculate additional stats
+        // Fetch orders from the same endpoint used by orders page
         const ordersResponse = await fetch(`${API_BASE}/api/orders`);
         const allOrders = await ordersResponse.json();
 
-        console.log(`📊 Stats loaded: ${stats.totalUsers} users, ${stats.totalOrders} orders`);
+        // Fetch users from the same endpoint used by users page
+        const usersResponse = await fetch(`${API_BASE}/api/profiles`);
+        const allUsers = await usersResponse.json();
 
-        // Calculate additional stats from orders
+        console.log(`📦 Loaded ${allOrders.length} orders, ${allUsers.length} users`);
+
+        // Calculate stats from real data
         const today = new Date().toDateString();
         const todayOrders = allOrders.filter(o => new Date(o.createdAt).toDateString() === today);
+        const pendingOrders = allOrders.filter(o => o.status === 'pending_verification');
         const completedOrders = allOrders.filter(o => o.status === 'completed');
         const processingOrders = allOrders.filter(o => o.status === 'processing');
-        const avgOrderValue = stats.totalOrders > 0 ? Math.round(stats.totalRevenue / stats.totalOrders) : 0;
 
-        // Add calculated stats
-        stats.todayOrders = todayOrders.length;
-        stats.completedOrders = completedOrders.length;
-        stats.processingOrders = processingOrders.length;
-        stats.avgOrderValue = avgOrderValue;
+        // Calculate revenue
+        const totalRevenue = allOrders.reduce((sum, order) => sum + (parseFloat(order.amount) || 0), 0);
+        const avgOrderValue = allOrders.length > 0 ? Math.round(totalRevenue / allOrders.length) : 0;
+
+        // Build stats object
+        const stats = {
+            totalOrders: allOrders.length,
+            todayOrders: todayOrders.length,
+            pendingOrders: pendingOrders.length,
+            totalRevenue: totalRevenue,
+            totalUsers: allUsers.length,
+            completedOrders: completedOrders.length,
+            processingOrders: processingOrders.length,
+            avgOrderValue: avgOrderValue
+        };
 
         // Display stats
         displayStats(stats);
@@ -56,7 +66,24 @@ async function loadDashboard() {
 
     } catch (error) {
         console.error('❌ Error loading dashboard:', error);
+        showDashboardError();
     }
+}
+
+function showDashboardError() {
+    console.error('Failed to load dashboard data. Check if backend is running.');
+    // Set all stats to 0 as fallback
+    const emptyStats = {
+        totalOrders: 0,
+        todayOrders: 0,
+        pendingOrders: 0,
+        totalRevenue: 0,
+        totalUsers: 0,
+        completedOrders: 0,
+        processingOrders: 0,
+        avgOrderValue: 0
+    };
+    displayStats(emptyStats);
 }
 
 function displayStats(stats) {

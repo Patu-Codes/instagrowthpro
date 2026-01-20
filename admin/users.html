@@ -78,13 +78,16 @@
             window.location.href = 'index.html';
         }
 
+        // Dynamic API Base
+        const API_BASE = window.location.origin;
+
         async function loadUsers() {
             const tbody = document.getElementById('usersTableBody');
 
             try {
                 console.log('📥 Loading users from API...');
 
-                const response = await fetch('http://localhost:3000/api/profiles');
+                const response = await fetch(`${API_BASE}/api/profiles`);
                 if (!response.ok) throw new Error('Failed to load users');
 
                 const profiles = await response.json();
@@ -148,7 +151,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+                const response = await fetch(`${API_BASE}/api/users/${userId}`, {
                     method: 'DELETE'
                 });
 
