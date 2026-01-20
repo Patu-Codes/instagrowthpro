@@ -2,7 +2,8 @@
 console.log('📊 Admin Dashboard Loading...');
 
 // Dynamic API Base
-const API_BASE = window.location.origin;
+const API_BASE = "https://instagrowthpro-backend.onrender.com";
+console.log('🌐 Dashboard API Base:', API_BASE);
 
 // Auth check
 function checkAuth() {
@@ -39,18 +40,21 @@ async function loadDashboard() {
         console.log('📦 Orders type:', typeof allOrders, 'Is array:', Array.isArray(allOrders));
         console.log('📦 Orders count:', Array.isArray(allOrders) ? allOrders.length : 'NOT AN ARRAY');
 
-        // Fetch users - EXACT same pattern as users.html  
-        console.log('🔄 Fetching profiles from:', `${API_BASE}/api/profiles`);
-        const profilesResponse = await fetch(`${API_BASE}/api/profiles`);
+        console.log(`✅ Successfully loaded ${allOrders.length} orders`);
 
-        if (!profilesResponse.ok) {
-            throw new Error(`Profiles API failed: ${profilesResponse.status} ${profilesResponse.statusText}`);
-        }
+        // CRITICAL FIX: Derive users from orders (profiles table may be empty)
+        // Users who place orders don't auto-create profiles
+        // Extract unique users from orders using profileId
+        const uniqueProfileIds = [...new Set(allOrders.map(o => o.profileId).filter(id => id))];
+        const uniqueUsernames = [...new Set(allOrders.map(o => o.profileUsername).filter(u => u))];
 
-        const allProfiles = await profilesResponse.json();
-        console.log('👥 Profiles API Response:', allProfiles);
-        console.log('👥 Profiles type:', typeof allProfiles, 'Is array:', Array.isArray(allProfiles));
-        console.log('👥 Profiles count:', Array.isArray(allProfiles) ? allProfiles.length : 'NOT AN ARRAY');
+        const totalUsers = Math.max(uniqueProfileIds.length, uniqueUsernames.length);
+
+        console.log('👥 Users derived from orders:');
+        console.log('  Unique Profile IDs:', uniqueProfileIds.length);
+        console.log('  Unique Usernames:', uniqueUsernames.length);
+        console.log('  Total Users:', totalUsers);
+
 
         // Ensure we have arrays
         if (!Array.isArray(allOrders)) {
@@ -58,12 +62,7 @@ async function loadDashboard() {
             throw new Error('Invalid orders response format');
         }
 
-        if (!Array.isArray(allProfiles)) {
-            console.error('❌ Profiles response is not an array!', allProfiles);
-            throw new Error('Invalid profiles response format');
-        }
-
-        console.log(`✅ Successfully loaded ${allOrders.length} orders and ${allProfiles.length} profiles`);
+        console.log(`✅ Successfully loaded ${allOrders.length} orders`);
 
         // Calculate stats from real data - same logic as orders.js filters
         const today = new Date().toDateString();
@@ -90,7 +89,7 @@ async function loadDashboard() {
             todayOrders: todayOrders.length,
             pendingOrders: pendingOrders.length,
             totalRevenue: totalRevenue,
-            totalUsers: allProfiles.length,
+            totalUsers: totalUsers, // Derived from orders, not profiles
             completedOrders: completedOrders.length,
             processingOrders: processingOrders.length,
             avgOrderValue: avgOrderValue

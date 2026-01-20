@@ -1,6 +1,7 @@
 // Admin Live Chat JavaScript
 // Dynamic API Base
-const API_BASE = window.location.origin;
+const API_BASE = "https://instagrowthpro-backend.onrender.com";
+console.log('🌐 Live Chat API Base:', API_BASE);
 
 let activeChats = [];
 let selectedUserId = null;

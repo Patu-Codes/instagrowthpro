@@ -2,7 +2,7 @@
 console.log('📦 Orders Management Loading...');
 
 // CRITICAL: API Base for all requests
-const API_BASE = window.location.origin;
+const API_BASE = "https://instagrowthpro-backend.onrender.com";
 console.log('🌐 Orders.js API Base:', API_BASE);
 
 // Check authentication
