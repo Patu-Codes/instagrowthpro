@@ -798,84 +798,325 @@ body {
 /* Mobile and below */
 @media (max-width: 768px) {
 
+    /* ==================== MOBILE OPTIMIZATION (max-width: 768px) ==================== */
+    
     /* Navigation */
     .nav-links {
         display: none;
+    }
+
+    .navbar {
+        padding: 0.5rem 0;
+    }
+
+    .nav-content {
+        padding: 0.5rem 1rem;
+    }
+
+    .logo-text {
+        font-size: 1.25rem;
     }
 
     .container {
         padding: 0 1rem;
     }
 
-    /* Hero Section */
+    /* HERO SECTION - Reduce clutter */
     .hero {
-        padding: 5rem 0 3rem;
+        padding: 5rem 0 2rem;
+        min-height: auto;
+    }
+
+    .hero-content {
+        text-align: left;
+    }
+
+    .badge {
+        margin-bottom: 1rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
     }
 
     .hero-title {
-        font-size: 2.5rem;
-        line-height: 1.2;
+        font-size: 2rem;
+        line-height: 1.3;
+        margin-bottom: 1rem;
     }
 
     .hero-subtitle {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
     }
 
+    /* Hero CTA - Stack vertically */
+    .hero-cta {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-cta .btn {
+        width: 100%;
+    }
+
+    /* Hero Stats - Simplified */
     .hero-stats {
-        gap: var(--spacing-md);
-        flex-wrap: wrap;
-        justify-content: center;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
     }
 
     .stat-divider {
         display: none;
     }
 
-    /* Pricing Grid - Stack vertically */
+    /* Disable gradient orbs on mobile */
+    .gradient-orb {
+        display: none;
+    }
+
+    /* PRICING SECTION - CRITICAL FIXES */
+    .pricing {
+        padding: 2rem 0;
+    }
+
     .pricing-grid {
         grid-template-columns: 1fr !important;
-        gap: var(--spacing-lg);
+        gap: 1rem;
     }
 
     .pricing-card {
+        padding: 1.5rem;
         max-width: 500px;
         margin: 0 auto;
+        border-width: 1px;
+        /* Reduce border */
+        box-shadow: none;
+        /* Remove heavy shadows */
     }
 
-    /* Features Grid */
-    .features-grid {
-        grid-template-columns: 1fr;
+    .pricing-card:hover {
+        transform: none;
+        /* Disable hover lift */
+        box-shadow: none;
     }
 
-    /* Buttons - Touch friendly */
-    .btn {
-        padding: 1rem 2rem;
-        min-height: 48px;
-        /* Touch target size */
-        font-size: 1rem;
+    .pricing-card-popular {
+        background: rgba(139, 92, 246, 0.05);
+        /* Subtle background */
     }
 
-    /* Section titles */
+    .popular-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 1rem;
+        top: -10px;
+    }
+
+    .pricing-header {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .plan-name {
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .plan-price .currency {
+        font-size: 1.25rem;
+    }
+
+    .plan-price .amount {
+        font-size: 2.25rem;
+    }
+
+    .plan-price .period {
+        font-size: 0.9rem;
+    }
+
+    .plan-price-usd {
+        font-size: 0.8rem;
+    }
+
+    .pricing-features {
+        margin-bottom: 1rem;
+    }
+
+    .feature-item {
+        padding: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+
+    /* FEATURES SECTION */
+    .features {
+        padding: 2rem 0;
+    }
+
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+
     .section-title {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
 
     .section-subtitle {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
-    /* Footer */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .feature-card {
+        padding: 1.5rem;
+        box-shadow: none;
+        /* Remove glow */
+        animation: none;
+        /* Disable animations */
+    }
+
+    .feature-card:hover {
+        transform: none;
+        /* Disable hover lift */
+        box-shadow: none;
+    }
+
+    .feature-card::before {
+        display: none;
+        /* Remove glow effect */
+    }
+
+    .feature-icon {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 1rem;
+        filter: none;
+        /* Remove drop shadow */
+        animation: none;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: none;
+        filter: none;
+    }
+
+    .feature-title {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* CTA SECTION */
+    .cta {
+        padding: 2rem 0;
+    }
+
+    .cta-content {
+        padding: 1.5rem;
+    }
+
+    .cta-title {
+        font-size: 1.75rem;
+    }
+
+    .cta-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    /* BUTTONS - Touch friendly */
+    .btn {
+        padding: 0.875rem 1.5rem;
+        min-height: 48px;
+        font-size: 0.95rem;
+    }
+
+    .btn-large {
+        padding: 1rem 1.75rem;
+    }
+
+    .btn::before {
+        display: none;
+        /* Remove ripple effect */
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-outline:hover {
+        transform: none;
+        /* Disable hover lift on mobile */
+    }
+
+    /* FOOTER */
+    .footer {
+        padding: 2rem 0 1rem;
+    }
+
     .footer-content {
         flex-direction: column;
         text-align: center;
-        gap: var(--spacing-lg);
+        gap: 1rem;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
     }
 
     .footer-column {
         margin-top: 1rem;
     }
 
-    /* Money-Back Guarantee Card - Better mobile layout */
+    .footer-column h4 {
+        font-size: 0.9rem;
+    }
+
+    .footer-column ul li a {
+        font-size: 0.85rem;
+    }
+
+    /* DISABLE ANIMATIONS ON MOBILE */
+    .badge-icon {
+        animation: none;
+    }
+
+    .gradient-text {
+        animation: none;
+    }
+
+    .logo svg {
+        animation: none;
+    }
+
+    /* Prevent horizontal scroll */
+    body {
+        overflow-x: hidden;
+    }
+
+    .hero,
+    .pricing,
+    .features,
+    .cta,
+    .footer {
+        overflow-x: hidden;
+    }
+
+    /* Money-Back Guarantee Card */
     .pricing-card .hide-scrollbar {
         max-height: 300px !important;
     }
