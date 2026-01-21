@@ -1,0 +1,441 @@
+/* ===== COMPREHENSIVE MOBILE FIX (max-width: 768px) ===== */
+@media (max-width: 768px) {
+
+    /* GLOBAL RESETS */
+    * {
+        max-width: 100vw;
+    }
+
+    html,
+    body {
+        overflow-x: hidden !important;
+        max-width: 100vw;
+        width: 100%;
+    }
+
+    .container {
+        max-width: 100%;
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    /* NAVBAR */
+    .navbar {
+        width: 100%;
+        height: auto;
+        padding: 12px 0;
+    }
+
+    .nav-content {
+        width: 100%;
+        padding: 0 16px;
+        flex-wrap: nowrap;
+    }
+
+    .nav-links {
+        display: none !important;
+    }
+
+    .logo {
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .logo svg {
+        width: 28px;
+        height: 28px;
+        animation: none;
+    }
+
+    .logo-text {
+        font-size: 16px;
+        white-space: nowrap;
+    }
+
+    .navbar .btn {
+        padding: 8px 14px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    /* HERO SECTION */
+    .hero {
+        width: 100%;
+        min-height: auto;
+        padding: 80px 0 40px;
+        overflow-x: hidden;
+    }
+
+    .hero-content {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 20px;
+        text-align: left;
+    }
+
+    .hero-title {
+        font-size: 28px !important;
+        line-height: 1.3;
+        margin-bottom: 12px;
+        word-wrap: break-word;
+    }
+
+    .hero-subtitle {
+        font-size: 15px !important;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .badge {
+        font-size: 12px;
+        padding: 6px 12px;
+        margin-bottom: 16px;
+    }
+
+    /* CTA BUTTONS */
+    .hero-cta {
+        width: 100%;
+        flex-direction: column !important;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .hero-cta .btn {
+        width: 100% !important;
+        max-width: 100%;
+        height: 48px;
+        padding: 0 20px;
+        font-size: 16px;
+        justify-content: center;
+    }
+
+    /* HERO STATS */
+    .hero-stats {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .stat-item {
+        flex: 1 1 auto;
+        min-width: calc(50% - 8px);
+    }
+
+    .stat-value {
+        font-size: 20px !important;
+    }
+
+    .stat-label {
+        font-size: 12px !important;
+    }
+
+    .stat-divider {
+        display: none !important;
+    }
+
+    /* GRADIENT ORBS - DISABLE */
+    .gradient-orb,
+    .orb-1,
+    .orb-2,
+    .orb-3 {
+        display: none !important;
+    }
+
+    /* SECTIONS */
+    .features,
+    .pricing,
+    .cta {
+        width: 100%;
+        padding: 40px 0;
+        overflow-x: hidden;
+    }
+
+    .section-header {
+        width: 100%;
+        padding: 0 20px;
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-size: 24px !important;
+        line-height: 1.3;
+        margin-bottom: 8px;
+    }
+
+    .section-subtitle {
+        font-size: 14px !important;
+        line-height: 1.5;
+    }
+
+    /* PRICING GRID */
+    .pricing-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+        width: 100%;
+        padding: 0 20px;
+        max-width: 100%;
+    }
+
+    .pricing-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 20px;
+        border-radius: 12px;
+        border-width: 1px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .pricing-card:hover {
+        transform: none !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .pricing-header {
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+    }
+
+    .plan-name {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    .plan-price {
+        gap: 4px;
+    }
+
+    .plan-price .currency {
+        font-size: 16px;
+    }
+
+    .plan-price .amount {
+        font-size: 24px !important;
+    }
+
+    .plan-price .period {
+        font-size: 14px;
+    }
+
+    .plan-price-usd {
+        font-size: 12px;
+    }
+
+    .pricing-features {
+        margin-bottom: 16px;
+    }
+
+    .feature-item {
+        padding: 6px 0;
+        font-size: 14px;
+        gap: 8px;
+    }
+
+    .feature-item svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+    }
+
+    .popular-badge {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    /* FEATURES GRID */
+    .features-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    .feature-card {
+        width: 100% !important;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+        animation: none !important;
+    }
+
+    .feature-card:hover {
+        transform: none !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .feature-card::before {
+        display: none !important;
+    }
+
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 12px;
+        filter: none !important;
+        animation: none !important;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: none !important;
+    }
+
+    .feature-title {
+        font-size: 18px !important;
+        margin-bottom: 8px;
+    }
+
+    .feature-description {
+        font-size: 14px !important;
+        line-height: 1.5;
+    }
+
+    /* CTA SECTION */
+    .cta-content {
+        width: 100%;
+        padding: 24px 20px;
+    }
+
+    .cta-title {
+        font-size: 24px !important;
+        margin-bottom: 12px;
+    }
+
+    .cta-subtitle {
+        font-size: 14px !important;
+        margin-bottom: 20px;
+    }
+
+    /* BUTTONS GLOBAL */
+    .btn {
+        width: 100%;
+        max-width: 100%;
+        height: 48px;
+        min-height: 48px;
+        padding: 0 20px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .btn-large {
+        height: 48px;
+        font-size: 15px;
+    }
+
+    .btn::before {
+        display: none !important;
+    }
+
+    .btn:hover {
+        transform: none !important;
+    }
+
+    /* FOOTER */
+    .footer {
+        width: 100%;
+        padding: 32px 0 24px;
+        overflow-x: hidden;
+    }
+
+    .footer-content {
+        width: 100%;
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        padding: 0 20px;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .footer-link {
+        font-size: 14px;
+    }
+
+    .footer-column {
+        width: 100%;
+        margin-top: 16px;
+    }
+
+    .footer-column h4 {
+        font-size: 14px;
+    }
+
+    .footer-column ul li a {
+        font-size: 13px;
+    }
+
+    .footer-bottom {
+        font-size: 12px;
+        padding-top: 16px;
+    }
+
+    /* DISABLE ANIMATIONS */
+    .badge-icon,
+    .gradient-text,
+    .logo svg {
+        animation: none !important;
+    }
+
+    .gradient-text {
+        background-size: 100% 100%;
+    }
+
+    /* PREVENT OVERFLOW */
+    .hero,
+    .pricing,
+    .features,
+    .cta,
+    .footer,
+    .navbar {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+
+    /* FORCE WRAPPING */
+    .nav-content,
+    .hero-cta,
+    .hero-stats,
+    .footer-links {
+        flex-wrap: wrap !important;
+    }
+
+    /* TEXT OVERFLOW */
+    h1,
+    h2,
+    h3,
+    p,
+    span {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* CHAT WIDGET FIX */
+    #chat-widget-button {
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 56px;
+        height: 56px;
+        z-index: 999;
+    }
+
+    #chat-widget-window {
+        bottom: 90px !important;
+        right: 20px !important;
+        left: 20px !important;
+        width: auto !important;
+        max-width: calc(100vw - 40px);
+        max-height: 70vh;
+    }
+
+    /* SCROLLBAR HIDE */
+    .pricing-card .hide-scrollbar {
+        max-height: 200px !important;
+    }
+}
