@@ -1,6 +1,9 @@
 // Live Chat Widget for Users
 // Auto-loads on all pages
 
+// Production API Base
+const API_BASE = 'https://instagrowthpro-backend.onrender.com';
+
 class ChatWidget {
     constructor() {
         this.isOpen = false;
@@ -108,7 +111,7 @@ class ChatWidget {
         if (!this.userId) return;
 
         try {
-            const response = await fetch(`http://localhost:3000/api/chat/${this.userId}`);
+            const response = await fetch(`${API_BASE}/api/chat/${this.userId}`);
             const messages = await response.json();
 
             // Check for new unread messages
@@ -157,7 +160,7 @@ class ChatWidget {
         console.log('👤 User:', this.username, 'ID:', this.userId);
 
         try {
-            const response = await fetch('http://localhost:3000/api/chat/send', {
+            const response = await fetch(`${API_BASE}/api/chat/send`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

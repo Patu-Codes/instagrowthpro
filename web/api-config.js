@@ -1,10 +1,7 @@
 // API Configuration
-// This file centralizes all API endpoint configurations
-// Use environment variables for production deployment
+// PRODUCTION ONLY - NO LOCAL REFERENCES
 
-const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-    ? 'https://your-backend-url.com'  // 👈 REPLACE with your production backend URL
-    : 'http://localhost:3000';
+const API_BASE_URL = 'https://instagrowthpro-backend.onrender.com';
 
 const API_ENDPOINTS = {
     baseURL: `${API_BASE_URL}/api`,

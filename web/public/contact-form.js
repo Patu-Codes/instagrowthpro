@@ -1,5 +1,8 @@
 // Contact Form Modal and Functionality
 
+// Production API Base
+const API_BASE = 'https://instagrowthpro-backend.onrender.com';
+
 function openContactForm() {
     // Create modal if it doesn't exist
     let modal = document.getElementById('contactFormModal');
@@ -95,7 +98,7 @@ async function submitContactForm(event) {
     submitBtn.textContent = 'Sending...';
 
     try {
-        const response = await fetch('http://localhost:3000/api/contact/send', {
+        const response = await fetch(`${API_BASE}/api/contact/send`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, subject, message })

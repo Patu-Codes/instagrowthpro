@@ -1,7 +1,7 @@
 // API Client - Clean interface to backend server
-// Replaces all localStorage and Firestore code
+// PRODUCTION ONLY - NO LOCAL REFERENCES
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://instagrowthpro-backend.onrender.com/api';
 
 class APIClient {
     constructor() {

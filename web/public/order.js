@@ -1,5 +1,8 @@
 console.log('🚀 ORDER.JS STARTING...');
 
+// Production API Base
+const API_BASE = 'https://instagrowthpro-backend.onrender.com';
+
 // Check if user is logged in (simple profile system)
 const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
@@ -96,7 +99,7 @@ function handleOrderSubmit(e) {
         console.log('⚠️ Demo selected - checking Instagram ID...');
 
         // Synchronous check using fetch with await would be better, but using callback
-        fetch(`http://localhost:3000/api/demo-usage-instagram/${username}`)
+        fetch(`${API_BASE}/api/demo-usage-instagram/${username}`)
             .then(res => res.json())
             .then(data => {
                 if (data.used) {
@@ -229,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check if user has already used demo
     if (currentUser) {
-        fetch(`http://localhost:3000/api/demo-usage/${currentUser.id}`)
+        fetch(`${API_BASE}/api/demo-usage/${currentUser.id}`)
             .then(res => res.json())
             .then(data => {
                 if (data.used) {

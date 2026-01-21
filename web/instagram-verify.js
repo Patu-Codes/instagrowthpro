@@ -1,4 +1,8 @@
 // Instagram Username Verification with Backend
+
+// Production API Base
+const API_BASE = 'https://instagrowthpro-backend.onrender.com';
+
 let usernameCheckTimeout;
 let isUsernameValid = false;
 
@@ -40,7 +44,7 @@ function checkInstagramUsername() {
         console.log('🔍 Starting verification for:', username);
 
         try {
-            const response = await fetch('http://localhost:3000/api/verify-instagram', {
+            const response = await fetch(`${API_BASE}/api/verify-instagram`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
