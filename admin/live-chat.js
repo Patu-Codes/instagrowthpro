@@ -55,16 +55,16 @@ function renderChatList() {
 
     if (activeChats.length === 0) {
         container.innerHTML = `
-            < div class= "empty-state" style = "padding: 2rem;" >
-            <p>No conversations yet</p>
-            </div >
-            `;
+            <div class="empty-state" style="padding: 2rem;">
+                <p>No conversations yet</p>
+            </div>
+        `;
         return;
     }
 
     container.innerHTML = activeChats.map(chat => `
-            < div class="chat-user-item ${chat.userId === selectedUserId ? 'active' : ''}"
-        onclick = "selectChat('${chat.userId}', '${chat.username}')" >
+        <div class="chat-user-item ${chat.userId === selectedUserId ? 'active' : ''}"
+            onclick="selectChat('${chat.userId}', '${chat.username}')">
             <div class="chat-user-header">
                 <span class="chat-user-name">${chat.username}</span>
                 ${chat.unreadCount > 0 ? `<span class="chat-unread-badge">${chat.unreadCount}</span>` : ''}
@@ -72,8 +72,8 @@ function renderChatList() {
             <div class="chat-last-message">
                 ${chat.messageCount} message${chat.messageCount !== 1 ? 's' : ''}
             </div>
-        </div >
-            `).join('');
+        </div>
+    `).join('');
 }
 
 // Select a chat
