@@ -1,9 +1,11 @@
 // Smart Backend Server with Chat Support and Email
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
 const nodemailer = require('nodemailer');
 const path = require('path');
+
+// CRITICAL: Import shared database module (SINGLE SOURCE OF TRUTH)
+const db = require('./db');
 
 const app = express();
 // Serve Admin Panel (static files)
@@ -44,84 +46,12 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// CRITICAL: Use absolute path to prevent PM2 from creating DB in root
-const DB_PATH = path.join(__dirname, 'instagrowth.db');
-console.log('🗄️  Database path:', DB_PATH);
-
-const db = new sqlite3.Database(DB_PATH, (err) => {
-    if (err) console.error('❌ Database error:', err);
-    else console.log('✅ Connected to database at:', DB_PATH);
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
 });
 
-// Create tables
-db.serialize(() => {
-    // Profiles table
-    db.run(`CREATE TABLE IF NOT EXISTS profiles (
-        id TEXT PRIMARY KEY,
-        username TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        email TEXT,
-        createdAt TEXT NOT NULL
-    )`);
+console.log('✅ Server using shared database module from db.js');
 
-    // Orders table
-    db.run(`CREATE TABLE IF NOT EXISTS orders (
-        orderId TEXT PRIMARY KEY,
-        profileId TEXT NOT NULL,
-        profileUsername TEXT,
-        username TEXT NOT NULL,
-        profileLink TEXT,
-        whatsapp TEXT,
-        package TEXT NOT NULL,
-        followers INTEGER NOT NULL,
-        amount REAL NOT NULL,
-        status TEXT DEFAULT 'pending_verification',
-        createdAt TEXT NOT NULL,
-        FOREIGN KEY (profileId) REFERENCES profiles (id)
-    )`)
-        ;
-
-
-    // Chat messages table
-    db.run(`CREATE TABLE IF NOT EXISTS chat_messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT NOT NULL,
-        username TEXT NOT NULL,
-        message TEXT NOT NULL,
-        sender TEXT NOT NULL,
-        isRead INTEGER DEFAULT 0,
-        createdAt TEXT NOT NULL
-    )`, (err) => {
-        if (err) console.error('Error creating chat table:', err);
-        else console.log('✅ Chat table ready');
-    });
-
-    // Demo usage tracking table
-    db.run(`CREATE TABLE IF NOT EXISTS demo_usage (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        profileId TEXT NOT NULL,
-        instagramUsername TEXT NOT NULL,
-        usedAt TEXT NOT NULL,
-        UNIQUE(profileId),
-        UNIQUE(instagramUsername)
-    )`);
-
-    // Contact messages table
-    db.run(`CREATE TABLE IF NOT EXISTS contact_messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        subject TEXT NOT NULL,
-        message TEXT NOT NULL,
-        createdAt TEXT NOT NULL,
-        status TEXT DEFAULT 'new'
-    )`, (err) => {
-        if (err) console.error('Error creating contact_messages table:', err);
-        else console.log('✅ Contact messages table ready');
-    });
-
-    console.log('✅ All tables ready');
-});
 
 // Profile endpoints
 app.post('/api/profiles', (req, res) => {
