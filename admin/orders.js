@@ -18,85 +18,7 @@ async function loadOrders() {
     console.log('📥 Loading orders from API...');
 
     try {
-        const response = await fetch(`${API_BASE}/api/orders');
-        if (!response.ok) throw new Error('Failed to load orders');
-
-        allOrders = await response.json();
-
-        console.log(`📦 Loaded ${ allOrders.length } orders from API`);
-        displayOrders(allOrders);
-    } catch (error) {
-        console.error('❌ Error loading orders:', error);
-        document.getElementById('ordersTableBody').innerHTML = `
-        < tr >
-        <td colspan="8" style="text-align: center; padding: 3rem; color: #EF4444;">
-            <div style="font-size: 2rem; margin-bottom: 1rem;">❌</div>
-            <div>Failed to load orders</div>
-            <div style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.7;">Make sure backend server is running on port 3000</div>
-        </td>
-            </tr >
-            `;
-    }
-}
-
-function displayOrders(orders) {
-    const tbody = document.getElementById('ordersTableBody');
-    document.getElementById('orderCount').textContent = orders.length;
-
-    if (orders.length === 0) {
-        tbody.innerHTML = `
-            < tr >
-            <td colspan="9" style="text-align: center; padding: 3rem;">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
-                <div style="color: var(--text-secondary);">No orders found</div>
-            </td>
-            </tr >
-            `;
-        return;
-    }
-
-    const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    tbody.innerHTML = sortedOrders.map(order => {
-        const date = new Date(order.createdAt).toLocaleString();
-        const statusClass = getStatusClass(order.status);
-        const statusText = getStatusText(order.status);
-        const packageName = order.package || order.packageName || 'N/A';
-
-        return `
-            < tr >
-                <td><strong>#${order.orderId || 'N/A'}</strong></td>
-                <td><strong>@${order.profileUsername || 'Unknown User'}</strong></td>
-                <td>${order.profileLink ? `<a href="${order.profileLink}" target="_blank" style="color: #8B5CF6; text-decoration: none; font-weight: 600;">🔗 Link</a>` : '<span style="color: var(--text-secondary);">N/A</span>'}</td>
-                <td><strong style="color: #EC4899;">@${order.username || 'NOT PROVIDED'}</strong></td>
-                <td>${packageName} (${order.followers})</td>
-                <td><strong>₹${order.amount}</strong></td>
-                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                <td>${date}</td>
-                <td>
-                    <button class="btn-action" onclick='viewOrder(${JSON.stringify(order).replace(/'/g, "&#39;")})'>View</button>
-                    <button class="btn-delete" onclick="deleteOrder('${order.orderId}')" style="background: linear-gradient(135deg, #EF4444, #DC2626); margin-left: 0.5rem;">Delete</button>
-                </td >
-            </tr >
-            `;
-    }).join('');
-}/ Orders Management JavaScript
-console.log('📦 Orders Management Loading...');
-
-// Check authentication
-if (!sessionStorage.getItem('adminLoggedIn')) {
-    window.location.href = 'index.html';
-}
-
-let allOrders = [];
-let currentFilter = 'all';
-
-// Load all orders from API
-async function loadOrders() {
-    console.log('📥 Loading orders from API...');
-
-    try {
-        const response = await fetch(`${ API_BASE || 'window.location.origin' } /api/orders');
+        const response = await fetch(`${API_BASE}/api/orders`);
         if (!response.ok) throw new Error('Failed to load orders');
 
         allOrders = await response.json();
@@ -110,7 +32,7 @@ async function loadOrders() {
                 <td colspan="8" style="text-align: center; padding: 3rem; color: #EF4444;">
                     <div style="font-size: 2rem; margin-bottom: 1rem;">❌</div>
                     <div>Failed to load orders</div>
-                    <div style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.7;">Make sure backend server is running on port 3000</div>
+                    <div style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.7;">Backend connection error</div>
                 </td>
             </tr>
         `;
@@ -140,6 +62,7 @@ function displayOrders(orders) {
         const date = new Date(order.createdAt).toLocaleString();
         const statusClass = getStatusClass(order.status);
         const statusText = getStatusText(order.status);
+        const packageName = order.package || order.packageName || 'N/A';
 
         return `
             <tr>
@@ -153,12 +76,12 @@ function displayOrders(orders) {
                     Link
                 </a>` : '<span style="color: var(--text-secondary);">N/A</span>'}</td>
                 <td><strong style="color: #EC4899;">@${order.username || 'NOT PROVIDED'}</strong></td>
-                <td>${order.package || order.packageName || 'N/A'} (${order.followers})</td>
+                <td>${packageName} (${order.followers})</td>
                 <td><strong>₹${order.amount}</strong></td>
                 <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                 <td>${date}</td>
                 <td>
-                    <button class="btn-action" onclick='viewOrder(${JSON.stringify(order).replace(/'/g, "&#39;")})'>View</button>
+                    <button class="btn-action" onclick='viewOrder(${JSON.stringify(order).replace(/'/g, "&#39;")})'> View</button>
                     <button class="btn-delete" onclick="deleteOrder('${order.orderId}')" style="background: linear-gradient(135deg, #EF4444, #DC2626); margin-left: 0.5rem;">Delete</button>
                 </td>
             </tr>

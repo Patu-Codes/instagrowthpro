@@ -1,5 +1,5 @@
-// Dynamic API Base
-const API_BASE = window.location.origin;
+// PRODUCTION ONLY - NO LOCAL REFERENCES
+const API_BASE = "https://instagrowthpro-backend.onrender.com";
 
 // Professional Modal System - Replaces all alert() and confirm()
 // Beautiful, animated modals that match your design

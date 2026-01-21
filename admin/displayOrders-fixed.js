@@ -1,5 +1,5 @@
-// Dynamic API Base
-const API_BASE = window.location.origin;
+// PRODUCTION ONLY - NO LOCAL REFERENCES
+const API_BASE = "https://instagrowthpro-backend.onrender.com";
 
 // Complete rebuild of displayOrders function with correct fields
 function displayOrders(orders) {

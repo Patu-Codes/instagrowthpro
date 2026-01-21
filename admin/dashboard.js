@@ -21,13 +21,13 @@ window.addEventListener('message', (event) => {
     }
 });
 
-// Load Dashboard Stats
+// Load Dashboard Stats - EXACT SAME LOGIC AS ORDERS.JS
 async function loadDashboard() {
-    try {
-        console.log('📥 Loading dashboard data from APIs...');
-        console.log('🌐 API Base:', API_BASE);
+    console.log('📥 Loading dashboard data from API (using orders.js logic)...');
+    console.log('🌐 API_BASE:', API_BASE);
 
-        // Fetch orders - EXACT same pattern as orders.js
+    try {
+        // EXACT SAME FETCH AS ORDERS.JS - NO MODIFICATIONS
         console.log('🔄 Fetching orders from:', `${API_BASE}/api/orders`);
         const ordersResponse = await fetch(`${API_BASE}/api/orders`);
 
@@ -39,6 +39,12 @@ async function loadDashboard() {
         console.log('📦 Orders API Response:', allOrders);
         console.log('📦 Orders type:', typeof allOrders, 'Is array:', Array.isArray(allOrders));
         console.log('📦 Orders count:', Array.isArray(allOrders) ? allOrders.length : 'NOT AN ARRAY');
+
+        // Ensure we have an array
+        if (!Array.isArray(allOrders)) {
+            console.error('❌ Orders response is not an array!', allOrders);
+            throw new Error('Invalid orders response format');
+        }
 
         console.log(`✅ Successfully loaded ${allOrders.length} orders`);
 
@@ -54,15 +60,6 @@ async function loadDashboard() {
         console.log('  Unique Profile IDs:', uniqueProfileIds.length);
         console.log('  Unique Usernames:', uniqueUsernames.length);
         console.log('  Total Users:', totalUsers);
-
-
-        // Ensure we have arrays
-        if (!Array.isArray(allOrders)) {
-            console.error('❌ Orders response is not an array!', allOrders);
-            throw new Error('Invalid orders response format');
-        }
-
-        console.log(`✅ Successfully loaded ${allOrders.length} orders`);
 
         // Calculate stats from real data - same logic as orders.js filters
         const today = new Date().toDateString();

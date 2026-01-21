@@ -1,8 +1,8 @@
 // Admin API Configuration
-// Automatically uses the current origin (works in local and production)
+// PRODUCTION ONLY - NO LOCAL REFERENCES
 
-// Dynamic API Base - uses current origin
-const API_BASE_URL = window.location.origin;
+// Production API Base
+const API_BASE_URL = "https://instagrowthpro-backend.onrender.com";
 
 const ADMIN_API_ENDPOINTS = {
     baseURL: `${API_BASE_URL}/api`,
